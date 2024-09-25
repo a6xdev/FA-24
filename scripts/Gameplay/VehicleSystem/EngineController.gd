@@ -17,7 +17,7 @@ enum state {
 var acceleration_rate: float  # A taxa de aumento de RPM ao acelerar
 @export var deceleration_rate: float = 300.0  # A taxa de redução de RPM ao desacelerar
 @export var idle_rpm = 3000
-@export var acceleration_rates:Array[int] = [10000,5000,4000,3000,2000,1000, 500]
+@export var acceleration_rates:Array[int] = [5000,10000,5000,4000,3000,2000,1000, 500]
 
 @export_group("DEBUG")
 @export var COlOR_RECT:ColorRect
