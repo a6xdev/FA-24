@@ -941,14 +941,14 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_bt2aq")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_pwqf5"]
-size = Vector2(5000, 5000)
+size = Vector2(15000, 15000)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_idhrq"]
 albedo_color = Color(0.0164519, 0.201299, 0, 1)
 uv1_triplanar = true
 
-[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_yqe8m"]
-data = PackedVector3Array(2500, 0, 2500, -2500, 0, 2500, 2500, 0, -2500, -2500, 0, 2500, -2500, 0, -2500, 2500, 0, -2500)
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_7pp3k"]
+points = PackedVector3Array(-7500, 0, -7500, -7500, 0, 7498.53, 7498.53, 0, -7500, 7498.53, 0, 7498.53)
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_q3w0r"]
 panorama = ExtResource("7_nebn5")
@@ -968,7 +968,7 @@ adjustment_saturation = 2.4
 [node name="Actors" type="Node" parent="."]
 
 [node name="Player" parent="Actors" instance=ExtResource("1_r32xo")]
-transform = Transform3D(0.258819, 0, -0.965926, 0, 1, 0, 0.965926, 0, 0.258819, 0, 0.377367, 0)
+transform = Transform3D(-0.0786157, 0, -0.996905, 0, 1, 0, 0.996905, 0, -0.0786157, 0, 0.377367, 0)
 
 [node name="Map" type="Node" parent="."]
 
@@ -1177,7 +1177,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_idhrq")
 [node name="StaticBody3D" type="StaticBody3D" parent="Map/MeshInstance3D"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Map/MeshInstance3D/StaticBody3D"]
-shape = SubResource("ConcavePolygonShape3D_yqe8m")
+shape = SubResource("ConvexPolygonShape3D_7pp3k")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_kuose")
