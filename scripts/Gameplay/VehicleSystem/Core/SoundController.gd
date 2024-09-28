@@ -1,7 +1,7 @@
 extends Node
 class_name SoundNode
 
-@export var VehicleEngine:EngineNode
+@export var VehicleEngine:EngineController
 @export var min_pitch = 0.8
 @export var max_pitch = 1.5
 
@@ -15,5 +15,5 @@ func _physics_process(delta: float) -> void:
 	EngineSound()
 	
 func EngineSound():
-	var rpm_ratio = VehicleEngine.R_RPM / VehicleEngine.max_rpm
+	var rpm_ratio = VehicleEngine.rpm / VehicleEngine.max_rpm
 	EngineAudio.pitch_scale = lerp(min_pitch, max_pitch, rpm_ratio)
