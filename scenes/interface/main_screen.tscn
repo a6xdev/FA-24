@@ -1,0 +1,112 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3grvim61s66i"]
+
+[ext_resource type="StyleBox" uid="uid://ca04sts1jyxfn" path="res://assets/UI/StyleBox/MainScreenButton.tres" id="1_d7ba8"]
+
+[node name="Interface" type="Node3D"]
+
+[node name="MainScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MainScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainScreen/CenterContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainScreen/CenterContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Career_Mode" type="Button" parent="MainScreen/CenterContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Career Mode"
+
+[node name="SinglePlayer" type="Button" parent="MainScreen/CenterContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Singeplayer"
+
+[node name="Multiplayer" type="Button" parent="MainScreen/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Multiplayer"
+
+[node name="Options" type="Button" parent="MainScreen/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Options"
+
+[node name="Multiplayer" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Multiplayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Multiplayer/CenterContainer"]
+layout_mode = 2
+
+[node name="1v1" type="Button" parent="Multiplayer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "1v1"
+
+[node name="GrandPrix" type="Button" parent="Multiplayer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Grand Prix"
+
+[node name="Singleplayer" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Singleplayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Singleplayer/CenterContainer"]
+layout_mode = 2
+
+[node name="QuickRace" type="Button" parent="Singleplayer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Quick Race"
+
+[node name="Training" type="Button" parent="Singleplayer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "Training"
+
+[node name="GrandPrix" type="Button" parent="Singleplayer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = ExtResource("1_d7ba8")
+text = "GrandPrix"
