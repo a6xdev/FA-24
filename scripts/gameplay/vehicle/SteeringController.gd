@@ -1,12 +1,6 @@
 extends Node
 class_name SteeringController
 
-@export var currentOs_export:CurrentOS = CurrentOS.PC
-enum CurrentOS{
-	MOBILE,
-	PC
-}
-
 @export var Vehicle: VehicleBody3D
 @export var steering_wheel: Node3D  # Referência ao nó do volante
 @export var max_steering_angle: float = 120.0  # Ângulo máximo do volante em graus
