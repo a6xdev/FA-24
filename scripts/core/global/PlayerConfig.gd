@@ -14,9 +14,9 @@ var audio_settings = {
 }
 
 # Configurações do carro
-var ERS:bool = false
 var ABS:bool = false
 var TractionControl:bool = false
+var automatic_gear:bool = true
 
 # <------------------------------------------------------------------------->
 # Data
