@@ -6,9 +6,9 @@ class_name EngineController
 @export_group("Engine Settings")
 @export var is_engine_on: bool = true
 @export var HP: int = 790
+@export var ERS_on:bool = false
 
 @export_group("Transmission System")
-@export var automatic_gear: bool = false
 @export var Gears: Array[int] = [-1, 0, 1, 2, 3, 4, 5, 6]
 
 var current_gear = 0
@@ -73,29 +73,57 @@ func _physics_process(delta: float) -> void:
 	BodyNode.current_gear = current_gear
 	BodyNode.current_rpm = rpm
 	
-	if Input.is_action_pressed("car_brake"):
-		BackTireLeft.brake = brake_force
-		BackTireRight.brake = brake_force
-		FrontTireLeft.brake = brake_force
-		FrontTireRight.brake = brake_force
-		is_braking = true
+	if PlayerConfig.automatic_gear:
+		if Input.is_action_pressed("car_force"):
+			if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
+				BackTireLeft.engine_force = engine_force
+				BackTireRight.engine_force = engine_force
+			elif is_reversing and current_gear == -1:
+				BackTireLeft.brake = brake_force
+				BackTireRight.brake = brake_force
+				
+		elif Input.is_action_pressed("car_brake"):
+			if is_reversing:
+				BackTireLeft.engine_force = -engine_force / 5
+				BackTireRight.engine_force = -engine_force / 5
+			else:
+				BackTireLeft.brake = brake_force
+				BackTireRight.brake = brake_force
+				FrontTireLeft.brake = brake_force
+				FrontTireRight.brake = brake_force
+				is_braking = true
+		else:
+			BackTireLeft.engine_force = 0.0
+			BackTireRight.engine_force = 0.0
+			BackTireLeft.brake = 0.0
+			BackTireRight.brake = 0.0
+			FrontTireLeft.brake = 0.0
+			FrontTireRight.brake = 0.0
+			is_braking = false
 	else:
-		BackTireLeft.brake = 0.0
-		BackTireRight.brake = 0.0
-		FrontTireLeft.brake = 0.0
-		FrontTireRight.brake = 0.0
-		is_braking = false
-		
-	if Input.is_action_pressed("car_force"):
-		if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
-			BackTireLeft.engine_force = engine_force
-			BackTireRight.engine_force = engine_force
-		elif is_engine_on and is_reversing and rpm > 0:
-			BackTireLeft.engine_force = -engine_force / 5
-			BackTireRight.engine_force = -engine_force / 5
-	else:
-		BackTireLeft.engine_force = 0.0
-		BackTireRight.engine_force = 0.0
+		if Input.is_action_pressed("car_brake"):
+			BackTireLeft.brake = brake_force
+			BackTireRight.brake = brake_force
+			FrontTireLeft.brake = brake_force
+			FrontTireRight.brake = brake_force
+			is_braking = true
+		else:
+			BackTireLeft.brake = 0.0
+			BackTireRight.brake = 0.0
+			FrontTireLeft.brake = 0.0
+			FrontTireRight.brake = 0.0
+			is_braking = false
+			
+		if Input.is_action_pressed("car_force"):
+			if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
+				BackTireLeft.engine_force = engine_force
+				BackTireRight.engine_force = engine_force
+			elif is_engine_on and is_reversing and rpm > 0:
+				BackTireLeft.engine_force = -engine_force / 5
+				BackTireRight.engine_force = -engine_force / 5
+		else:
+			BackTireLeft.engine_force = 0.0
+			BackTireRight.engine_force = 0.0
 
 func get_gear_ratio() -> float:
 	return 1.0 + (current_gear * 0.15)
@@ -118,11 +146,11 @@ func UpdateTorque() -> void:
 		
 	torque = clamp(torque, 0, power / max_rpm * 9.5488)
 
-
 func TransmissionController():
 	var current_gear_index: int = Gears.find(current_gear)
-
-	if not automatic_gear:
+	
+	# <---- Troca de marcha manuel ---->
+	if not PlayerConfig.automatic_gear:
 		if Input.is_action_just_released("upshift"):
 			if current_gear_index < Gears.size() - 1:
 				current_gear_index += 1
@@ -134,7 +162,35 @@ func TransmissionController():
 				current_gear = Gears[current_gear_index]
 				rpm *= 1.5
 				engine_force -= (rpm / max_rpm) * 0.2 * weight
-	
+	else:
+		# <---- Troca de marcha automatica (Gay?) --->
+		if rpm > 14000:
+			current_gear_index += 1
+			current_gear = Gears[current_gear_index]
+			rpm *= 2.0 / 3.0
+		elif current_gear_index > 1 and BodyNode.current_speed < speed_limit[current_gear_index - 1]:
+			current_gear_index -= 1
+			current_gear = Gears[current_gear_index]
+			#rpm *= 1.5
+			engine_force -= (rpm / max_rpm) * 0.2 * weight
+		
+		# Se a velocidade for 0km/h e estiver na marcha 1, ela vai para a marcha 0.
+		if BodyNode.current_speed == 0.0 and current_gear == 1:
+			current_gear_index -= 1
+			current_gear = Gears[current_gear_index]
+		
+		if current_gear == 0:
+			if Input.is_action_pressed("car_force"):
+				current_gear_index += 1
+				current_gear = Gears[current_gear_index]
+			if Input.is_action_pressed("car_brake"):
+				current_gear_index -= 1
+				current_gear = Gears[current_gear_index]
+		if current_gear == -1:
+			if Input.is_action_pressed("car_force") and BodyNode.current_speed == 0.0:
+				current_gear_index += 1
+				current_gear = Gears[current_gear_index]
+
 	if current_gear == -1:
 		is_reversing = true
 		in_neutral = false
@@ -153,7 +209,7 @@ func UpdateDynamic(delta) -> void:
 		var drag_force: float = 0.05 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)
 		var total_force: float = force_tires + downforce - drag_force
 		
-		if PlayerConfig.ERS:
+		if PlayerConfig.ERS_on:
 			total_force += ERS
 		
 		acceleration = total_force / weight
