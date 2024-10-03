@@ -15,10 +15,6 @@ run/main_scene="res://scenes/tracks/tsukuba_track.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[autoload]
-
-PlayerConfig="*res://scripts/core/global/PlayerConfig.gd"
-
 [display]
 
 window/stretch/mode="viewport"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=4 uid="uid://d0jymrvtrsfh7"]
+[gd_scene load_steps=89 format=4 uid="uid://d0jymrvtrsfh7"]
 
 [ext_resource type="PackedScene" uid="uid://uuwnvruoeg54" path="res://assets/prefabs/Actors/Player.tscn" id="1_r32xo"]
 [ext_resource type="Texture2D" uid="uid://gjxxk5vlb4a3" path="res://assets/models/environments/tracks/test/race-trackkarting-track-based-on-south-garda/textures/material.001.jpg" id="2_i5w1a"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://defhhsj1h513t" path="res://assets/models/environments/tracks/test/race-trackkarting-track-based-on-south-garda/textures/standard_material.png" id="4_ykcw5"]
 [ext_resource type="Texture2D" uid="uid://c10r3ogd36guf" path="res://assets/models/environments/tracks/test/race-trackkarting-track-based-on-south-garda/textures/parking.jpg" id="5_n8sjb"]
 [ext_resource type="Texture2D" uid="uid://dxmq0v0r60nob" path="res://assets/models/environments/tracks/test/race-trackkarting-track-based-on-south-garda/textures/Italiancolors.jpg" id="6_jye7d"]
-[ext_resource type="Texture2D" uid="uid://b3mms571p85pi" path="res://assets/DaySkyHDRI034A_4K-TONEMAPPED.jpg" id="7_nebn5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ukpp"]
 resource_name = "Material.001"
@@ -950,11 +949,10 @@ uv1_triplanar = true
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_7pp3k"]
 points = PackedVector3Array(-7500, 0, -7500, -7500, 0, 7498.53, 7498.53, 0, -7500, 7498.53, 0, 7498.53)
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_q3w0r"]
-panorama = ExtResource("7_nebn5")
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rwg23"]
 
 [sub_resource type="Sky" id="Sky_nwl4j"]
-sky_material = SubResource("PanoramaSkyMaterial_q3w0r")
+sky_material = SubResource("ProceduralSkyMaterial_rwg23")
 
 [sub_resource type="Environment" id="Environment_kuose"]
 background_mode = 2

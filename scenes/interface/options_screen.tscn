@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://b4myuj2n5iowg"]
+[gd_scene load_steps=2 format=3 uid="uid://b4myuj2n5iowg"]
+
+[ext_resource type="Script" path="res://scripts/gameplay/UI/SettingsScreen.gd" id="1_rnje7"]
 
 [node name="OptionsScreen" type="Control"]
 layout_mode = 3
@@ -7,3 +9,160 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_rnje7")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -256.0
+offset_right = 300.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+tab_alignment = 1
+current_tab = 1
+
+[node name="Controls" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+tab_alignment = 1
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Controls"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Controls/MarginContainer"]
+layout_mode = 2
+
+[node name="SteerSensititivy" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SteerSensititivy" type="Label" parent="TabContainer/Controls/MarginContainer/VBoxContainer/SteerSensititivy"]
+layout_mode = 2
+text = "STEER SENSITIVITY"
+
+[node name="SteerSlider" type="HSlider" parent="TabContainer/Controls/MarginContainer/VBoxContainer/SteerSensititivy"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.1
+value = 0.3
+
+[node name="Value" type="Label" parent="TabContainer/Controls/MarginContainer/VBoxContainer/SteerSensititivy"]
+layout_mode = 2
+text = "0.0"
+
+[node name="AccelSensititivy" type="HBoxContainer" parent="TabContainer/Controls/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AccelSensititivy" type="Label" parent="TabContainer/Controls/MarginContainer/VBoxContainer/AccelSensititivy"]
+layout_mode = 2
+text = "ACCEL SENSITIVITY"
+
+[node name="AccelSlider" type="HSlider" parent="TabContainer/Controls/MarginContainer/VBoxContainer/AccelSensititivy"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.1
+value = 0.3
+
+[node name="Value" type="Label" parent="TabContainer/Controls/MarginContainer/VBoxContainer/AccelSensititivy"]
+layout_mode = 2
+text = "0.0"
+
+[node name="Difficulty" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+tab_alignment = 1
+metadata/_tab_index = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Difficulty"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Difficulty/MarginContainer"]
+layout_mode = 2
+
+[node name="ControlMode" type="HBoxContainer" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 355
+
+[node name="ControlMode" type="Label" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/ControlMode"]
+layout_mode = 2
+text = "CONTROL MODE"
+
+[node name="ControlMode2" type="Label" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/ControlMode"]
+layout_mode = 2
+text = "Empty..."
+
+[node name="ABS" type="HBoxContainer" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 505
+
+[node name="ABS" type="Label" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/ABS"]
+layout_mode = 2
+text = "ABS"
+
+[node name="CheckBox" type="CheckBox" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/ABS"]
+layout_mode = 2
+flat = true
+
+[node name="TractionControl" type="HBoxContainer" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 375
+
+[node name="TractionControl" type="Label" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/TractionControl"]
+layout_mode = 2
+text = "TRACTION CONTROL"
+
+[node name="CheckBox2" type="CheckBox" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/TractionControl"]
+layout_mode = 2
+flat = true
+
+[node name="AutomaticGear" type="HBoxContainer" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 396
+
+[node name="AutomaticGear" type="Label" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/AutomaticGear"]
+layout_mode = 2
+text = "AUTOMATIC GEAR"
+
+[node name="CheckBox2" type="CheckBox" parent="TabContainer/Difficulty/MarginContainer/VBoxContainer/AutomaticGear"]
+layout_mode = 2
+flat = true
+
+[connection signal="toggled" from="TabContainer/Difficulty/MarginContainer/VBoxContainer/ABS/CheckBox" to="." method="ABS_toggled"]
+[connection signal="toggled" from="TabContainer/Difficulty/MarginContainer/VBoxContainer/TractionControl/CheckBox2" to="." method="TractionControl_toggled"]
+[connection signal="toggled" from="TabContainer/Difficulty/MarginContainer/VBoxContainer/AutomaticGear/CheckBox2" to="." method="automaticGear_toggled"]
