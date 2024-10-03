@@ -1,10 +1,13 @@
 extends Node
 class_name HudController
 
+@export var PlayerConfigNode:PlayerConfig
+
 @export var BodyNode:BodyController
 @export var VehicleEngine:EngineController
 
 @export_group("HUD Controller")
+@export var PlayerInterface:CanvasLayer
 @export var GearLabel:Label
 @export var rpmLabel:Label
 @export var SpeedLabel:Label

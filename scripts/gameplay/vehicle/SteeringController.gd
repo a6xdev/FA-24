@@ -1,37 +1,33 @@
 extends Node
 class_name SteeringController
 
-@export var Vehicle: VehicleBody3D
-@export var steering_wheel: Node3D  # Referência ao nó do volante
-@export var max_steering_angle: float = 120.0  # Ângulo máximo do volante em graus
-
-@export_group("Interface")
-@export var SensiSteer:HSlider
-@export var SensiAccel:HSlider
-@export var Deadzone:HSlider
+@export var VehicleBody:BodyController
+@export var Config:PlayerConfig
+@export var steeringModel:Node3D
 
 @export_group("Direction Settings")
-@export var speed_threshold = 100.0 # Limite de velocidade
+@export var speed_threshold:int = 120
 @export_subgroup("Steering Angle")
-@export var max_steer_angle = 0.6
-@export var min_steer_angle = 0.2
+@export var max_steering_angle:float = 300
+@export var max_tire_angle:float = 0.6
+@export var min_tire_angle:float = 0.05
 @export_subgroup("Steering Speed")
-@export var steering_speed: float = 5.0  ## Speed ​​at which the vehicle reaches the maximum angle
-@export var min_steering_speed:float = 1.0
+@export var steering_speed:int = 2
+@export var min_steering_speed:int = 1
 
-@export_group("Wheel Settings")
-@export var FrontLeftWheel: VehicleWheel3D
-@export var FrontRightWheel: VehicleWheel3D
-@export var BackLeftWheel: VehicleWheel3D
-@export var BackRightWheel: VehicleWheel3D
-@export_subgroup("Settings")
-@export var tire_grip:float = 3  ## Sets the tire's grip on the surface. Lower values ​​provide greater traction, improving cornering stability, while higher values ​​result in more slippage and reduced cornering control.
+@export_group("Set Tires")
+@export var FrontLeftTire:VehicleWheel3D
+@export var FrontRightTire:VehicleWheel3D
+@export var BackLeftTire:VehicleWheel3D
+@export var BackRightTire:VehicleWheel3D
 
-var gyro
-var current_steering
+var steering_input
+var current_steering:float
+var current_tire_angle:float
 
-var steering_sensitivity: float = 0.02
-var accel_sensitivity:float = 0.05
+var target_steering
+
+# accelerometer
 var smoothing_factor: float = 0.1  # Fator de suavização
 var previous_steering_angle: float = 0.0
 var deadzone:float = 0.05
@@ -40,60 +36,36 @@ var max_rotation_at_low_speed:float = 30.0
 var max_rotation_at_high_speed:float = 10.0
 var max_rotation: float = 0.5
 
-var speed
-
-var current_steering_speed
-
 func _physics_process(delta: float) -> void:
-	SteerVehicle(delta)
 	
-	steering_sensitivity = SensiSteer.value
-	accel_sensitivity = SensiAccel.value
-	deadzone = Deadzone.value
-	
-func SteerVehicle(delta):
-	set_tire_grip()
-	speed = Vehicle.linear_velocity.length() * 3.6  # Velocidade em km/h
-	max_steer_angle = clamp(0.6 - (speed / speed_threshold) * 0.4, min_steer_angle, 0.6)
+	# Tire controller
+	var interpolation_factor = min(1.0, VehicleBody.current_speed / (speed_threshold * 1.0))
+	current_tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
 	
 	if Input.get_accelerometer():
-		steering_speed = 1.0
-		min_steering_speed = 0.3
 		MobileController(delta)
 	else:
 		ComputerController(delta)
 		
-	steering_wheel.rotation_degrees.z = Vehicle.steering * -max_steering_angle
+	SteerController(delta)
+
+func SteerController(delta):
+	current_steering = lerp(current_steering, target_steering, Config.steer_sensitivity * delta)
+	steeringModel.rotation_degrees.z = -current_steering
+	var tire_angle = clamp(current_steering * current_tire_angle, -max_tire_angle, max_tire_angle)
 	
-func set_tire_grip():
-	# Applies the value of 'tire_grip' to all wheels
-	FrontLeftWheel.wheel_friction_slip = tire_grip
-	FrontRightWheel.wheel_friction_slip = tire_grip
-	BackLeftWheel.wheel_friction_slip = tire_grip
-	BackRightWheel.wheel_friction_slip = tire_grip
+	if abs(target_steering) < 0.1:
+		tire_angle = move_toward(VehicleBody.steering, 0, delta * steering_speed * 2)
+	
+	VehicleBody.steering = move_toward(VehicleBody.steering, tire_angle, delta * steering_speed)
 
-# <------------------------------------------------------------------------->
-# Todos os tipos de controles.
-# <------------------------------------------------------------------------->
 
-# Computer Controller
 func ComputerController(delta):
-	current_steering_speed = clamp(steering_speed - (speed / speed_threshold), min_steering_speed, steering_speed)
-	Vehicle.steering = move_toward(Vehicle.steering, Input.get_axis("car_right", "car_left") * max_steer_angle, delta * current_steering_speed)
+	target_steering =  Input.get_axis("car_right", "car_left") * max_steering_angle
 
-# Mobile
 func MobileController(delta):
 	var accelerometer_data = Input.get_accelerometer()
-	var raw_steering_angle  = accelerometer_data.x * accel_sensitivity
+	var smoothed_steering_angle = lerp(previous_steering_angle, accelerometer_data.x, smoothing_factor)
+	target_steering =  -smoothed_steering_angle * max_steering_angle
 	
-	if abs(raw_steering_angle) < deadzone:
-		raw_steering_angle = 0.0
-		
-	var smoothed_steering_angle = lerp(previous_steering_angle, raw_steering_angle, smoothing_factor)
-	previous_steering_angle = smoothed_steering_angle
-	var dynamic_max_rotation = lerp(max_rotation_at_low_speed, max_rotation_at_high_speed, min(1.0, speed / speed_threshold))
-	smoothed_steering_angle *= steering_sensitivity
-	smoothed_steering_angle = clamp(smoothed_steering_angle, -max_rotation, max_rotation)
 	
-	current_steering_speed = clamp(steering_speed - (speed / speed_threshold), min_steering_speed, steering_speed)
-	Vehicle.steering = move_toward(Vehicle.steering, -smoothed_steering_angle, delta * current_steering_speed)

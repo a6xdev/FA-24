@@ -1,22 +1,24 @@
 extends Node
+class_name PlayerConfig
 
-var save_path = "res://data/"
+@export var save_path = "res://data/"
+@export var paused:bool = false
 
 # Configurações do jogador local
-var steer_sensitivity:float = 1.0
-var accelerometer_sensitivity:float = 1.0
-var volume:float = 1.0
-var screen_resolution:Vector2 = Vector2(1920, 1080)
-var audio_settings = {
+@export var steer_sensitivity:float = 1.0
+@export var accelerometer_sensitivity:float = 1.0
+@export var volume:float = 1.0
+@export var screen_resolution:Vector2 = Vector2(1920, 1080)
+@export var audio_settings = {
 	"music_volume": 1.0,
 	"engine_volume": 1.0,
 	"tire_volume": 1.0
 }
 
 # Configurações do carro
-var ABS:bool = false
-var TractionControl:bool = false
-var automatic_gear:bool = true
+@export var ABS:bool = false
+@export var TractionControl:bool = false
+@export var automatic_gear:bool = false
 
 # <------------------------------------------------------------------------->
 # Data

@@ -2,6 +2,7 @@ extends Node
 class_name EngineController
 
 @export var BodyNode: BodyController
+@export var PlayerConfigNode:PlayerConfig
 
 @export_group("Engine Settings")
 @export var is_engine_on: bool = true
@@ -59,7 +60,7 @@ var brake_temperature:float = min_brake_temperature
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("test_key"):
-		PlayerConfig.ERS = !PlayerConfig.ERS
+		PlayerConfigNode.ERS = !PlayerConfigNode.ERS
 
 func _physics_process(delta: float) -> void:
 	UpdateTorque()
@@ -73,7 +74,7 @@ func _physics_process(delta: float) -> void:
 	BodyNode.current_gear = current_gear
 	BodyNode.current_rpm = rpm
 	
-	if PlayerConfig.automatic_gear:
+	if PlayerConfigNode.automatic_gear:
 		if Input.is_action_pressed("car_force"):
 			if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
 				BackTireLeft.engine_force = engine_force
@@ -150,7 +151,7 @@ func TransmissionController():
 	var current_gear_index: int = Gears.find(current_gear)
 	
 	# <---- Troca de marcha manuel ---->
-	if not PlayerConfig.automatic_gear:
+	if not PlayerConfigNode.automatic_gear:
 		if Input.is_action_just_released("upshift"):
 			if current_gear_index < Gears.size() - 1:
 				current_gear_index += 1
@@ -209,7 +210,7 @@ func UpdateDynamic(delta) -> void:
 		var drag_force: float = 0.05 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)
 		var total_force: float = force_tires + downforce - drag_force
 		
-		if PlayerConfig.ERS_on:
+		if ERS_on:
 			total_force += ERS
 		
 		acceleration = total_force / weight
