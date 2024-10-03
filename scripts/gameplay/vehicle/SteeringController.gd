@@ -25,15 +25,11 @@ var steering_input
 var current_steering:float
 var current_tire_angle:float
 
-var target_steering
-
 # accelerometer
 var smoothing_factor: float = 0.1  # Fator de suavização
 var previous_steering_angle: float = 0.0
-var deadzone:float = 0.05
+var deadzone:float = 0.1
 
-var max_rotation_at_low_speed:float = 30.0
-var max_rotation_at_high_speed:float = 10.0
 var max_rotation: float = 0.5
 
 func _physics_process(delta: float) -> void:
@@ -47,25 +43,28 @@ func _physics_process(delta: float) -> void:
 	else:
 		ComputerController(delta)
 		
-	SteerController(delta)
-
-func SteerController(delta):
-	current_steering = lerp(current_steering, target_steering, Config.steer_sensitivity * delta)
-	steeringModel.rotation_degrees.z = -current_steering
-	var tire_angle = clamp(current_steering * current_tire_angle, -max_tire_angle, max_tire_angle)
-	
-	if abs(target_steering) < 0.1:
-		tire_angle = move_toward(VehicleBody.steering, 0, delta * steering_speed * 2)
-	
-	VehicleBody.steering = move_toward(VehicleBody.steering, tire_angle, delta * steering_speed)
-
+	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
 
 func ComputerController(delta):
-	target_steering =  Input.get_axis("car_right", "car_left") * max_steering_angle
+	current_steering = lerp(current_steering, Input.get_axis("car_right", "car_left"), Config.steer_sensitivity * delta)
+	VehicleBody.steering = move_toward(VehicleBody.steering, Input.get_axis("car_right", "car_left") * current_tire_angle, delta * steering_speed)
 
 func MobileController(delta):
 	var accelerometer_data = Input.get_accelerometer()
 	var smoothed_steering_angle = lerp(previous_steering_angle, accelerometer_data.x, smoothing_factor)
-	target_steering =  -smoothed_steering_angle * max_steering_angle
+	smoothed_steering_angle *= Config.steer_sensitivity
+	smoothed_steering_angle = clamp(smoothed_steering_angle, -max_rotation, max_rotation)
+	
+	if abs(smoothed_steering_angle) < deadzone:
+		smoothed_steering_angle = 0.0
+	else:
+		var sign = sign(smoothed_steering_angle)
+		var adjusted_value = abs(smoothed_steering_angle) - deadzone
+		var scaled_value = adjusted_value / (1.0 - deadzone) # Normalizar o valor fora da deadzone
+		smoothed_steering_angle = sign * scaled_value
+		
+	current_steering = - smoothed_steering_angle
+	
+	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle, delta * steering_speed)
 	
 	
