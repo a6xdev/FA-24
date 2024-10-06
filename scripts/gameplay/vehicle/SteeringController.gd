@@ -12,8 +12,10 @@ class_name SteeringController
 @export var max_tire_angle:float = 0.6
 @export var min_tire_angle:float = 0.05
 @export_subgroup("Steering Speed")
-@export var steering_speed:int = 2
-@export var min_steering_speed:int = 1
+@export var max_steering_speed:float = 2
+@export var min_steering_speed:float = 1
+
+var current_steering_speed
 
 @export_group("Set Tires")
 @export var FrontLeftTire:VehicleWheel3D
@@ -26,9 +28,9 @@ var current_steering:float
 var current_tire_angle:float
 
 # accelerometer
-var smoothing_factor: float = 0.1  # Fator de suavização
+var smoothing_factor: float = 0.2  # Fator de suavização
 var previous_steering_angle: float = 0.0
-var deadzone:float = 0.1
+var deadzone:float = 0.05
 
 var max_rotation: float = 0.5
 
@@ -42,12 +44,13 @@ func _physics_process(delta: float) -> void:
 		MobileController(delta)
 	else:
 		ComputerController(delta)
-		
+	
 	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
 
 func ComputerController(delta):
 	current_steering = lerp(current_steering, Input.get_axis("car_right", "car_left"), Config.steer_sensitivity * delta)
-	VehicleBody.steering = move_toward(VehicleBody.steering, Input.get_axis("car_right", "car_left") * current_tire_angle, delta * steering_speed)
+	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
+	VehicleBody.steering = move_toward(VehicleBody.steering, Input.get_axis("car_right", "car_left") * current_tire_angle, delta * max_steering_speed)
 
 func MobileController(delta):
 	var accelerometer_data = Input.get_accelerometer()
@@ -65,6 +68,7 @@ func MobileController(delta):
 		
 	current_steering = - smoothed_steering_angle
 	
-	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle, delta * steering_speed)
+	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
+	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle, delta * max_steering_speed)
 	
 	
