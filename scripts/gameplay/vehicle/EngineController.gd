@@ -18,8 +18,8 @@ var in_neutral: bool = false
 var is_braking:bool = false
 
 @export_group("Acceleration and Speed Limits")
-@export var acceleration_rates: Array[int] = [1000,10000, 5000, 4000, 3000, 2000, 1000, 500]
-@export var speed_limit: Array[int] = [50, 0, 50, 115, 173, 240, 310, 360]
+@export var acceleration_rates: Array[int] = [1000,15000, 5000, 6000, 7000, 5000, 4000, 3000]
+@export var speed_limit:Array[int] = [50, 0, 124, 152, 180, 208, 273, 302]
 
 var torque: float = 0.0
 var rpm: float = 0.0
@@ -134,16 +134,16 @@ func UpdateTorque() -> void:
 
 	if rpm > 0:
 		var gear_multipier = clamp(1.5 - (current_gear * 0.2), 0.8, 1.5)
-		torque = (power * 9.5488) / max_rpm * gear_multipier
+		torque = (power * 9550) / rpm
 	else:
 		torque = 0.0
 
-	if rpm >= max_rpm * 0.85:
-		var decrease_factor = (max_rpm - rpm) / (max_rpm * 0.1)
-		if current_gear >= 5:
-			decrease_factor = clamp(decrease_factor, 0.8, 1.0)
-		decrease_factor = clamp(decrease_factor, 0.3, 1.0)
-		torque *= decrease_factor
+	#if rpm >= max_rpm * 0.85:
+		#var decrease_factor = (max_rpm - rpm) / (max_rpm * 0.1)
+		#if current_gear >= 5:
+			#decrease_factor = clamp(decrease_factor, 0.8, 1.0)
+		#decrease_factor = clamp(decrease_factor, 0.3, 1.0)
+		#torque *= decrease_factor
 		
 	torque = clamp(torque, 0, power / max_rpm * 9.5488)
 
@@ -156,7 +156,7 @@ func TransmissionController():
 			if current_gear_index < Gears.size() - 1:
 				current_gear_index += 1
 				current_gear = Gears[current_gear_index]
-				rpm *= 2.0 / 3.0
+				rpm *= 0.66
 		elif Input.is_action_just_released("downshift"):
 			if current_gear_index > 0:
 				current_gear_index -= 1
@@ -168,11 +168,11 @@ func TransmissionController():
 		if rpm > 14000:
 			current_gear_index += 1
 			current_gear = Gears[current_gear_index]
-			rpm *= 2.0 / 3.0
-		elif current_gear_index > 1 and BodyNode.current_speed < speed_limit[current_gear_index - 1]:
+			rpm *= 0.66
+		elif current_gear_index > 1:
 			current_gear_index -= 1
 			current_gear = Gears[current_gear_index]
-			#rpm *= 1.5
+			rpm *= 1.5
 			engine_force -= (rpm / max_rpm) * 0.2 * weight
 		
 		# Se a velocidade for 0km/h e estiver na marcha 1, ela vai para a marcha 0.
@@ -204,7 +204,7 @@ func TransmissionController():
 
 func UpdateDynamic(delta) -> void:
 	var gear_ratio: float = get_gear_ratio()
-
+	
 	if torque != null and gear_ratio != null:
 		var force_tires: float = torque * gear_ratio
 		var drag_force: float = 0.05 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)
@@ -215,7 +215,10 @@ func UpdateDynamic(delta) -> void:
 		
 		acceleration = total_force / weight
 		engine_force = acceleration * weight
-
+		
+		if BodyNode.current_speed >= speed_limit[current_gear + 1]:
+			engine_force = 0.0
+			
 		if BodyNode.current_speed > 200:
 			engine_force *= 0.95
 		elif BodyNode.current_speed > 300:
@@ -232,7 +235,7 @@ func UpdateRPM(delta) -> void:
 			if rpm > max_rpm:
 				rpm = max_rpm
 		elif Input.is_action_pressed("car_brake") and is_reversing:
-			var rpm_change = acceleration_rate * delta
+			var rpm_change = (acceleration_rate * 2) * delta
 			rpm += rpm_change
 			if rpm > 4000:
 				rpm = 4000
