@@ -1,7 +1,6 @@
 extends VehicleWheel3D
 
 @export var PlayerConfigNode:PlayerConfig
-# Script para controlar um único pneu
 
 @export var max_grip: float = 1.0  # Aderência máxima do pneu
 @export var wear_rate: float = 0.01  # Taxa de desgaste do pneu
@@ -12,7 +11,10 @@ extends VehicleWheel3D
 var current_grip: float = max_grip  # Aderência atual do pneu
 var wear: float = 0.0  # Nível de desgaste do pneu
 
+var TractionControl:bool = false
+
 func _physics_process(delta: float) -> void:
+	
 	wheel_friction_slip = max_grip
 	update_tire(delta, self.engine_force * 3.6, self.wheel_friction_slip)
 	
