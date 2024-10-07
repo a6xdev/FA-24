@@ -40,7 +40,7 @@ func load_config():
 		var data = file.get_var()
 		
 		steer_sensitivity = data.get("steer_sensitivity", 1.0)
-		accelerometer_sensitivity = data.get("accelerometer_sensitivity, 1.0")
+		accelerometer_sensitivity = data.get("accelerometer_sensitivity", 1.0)
 		volume = data.get("volume", 1.0)
 		screen_resolution = data.get("screen_resolution", Vector2(1920, 1080))
 		audio_settings = data.get("audio_settings", {
