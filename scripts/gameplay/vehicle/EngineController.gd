@@ -130,6 +130,7 @@ func get_gear_ratio() -> float:
 	return 1.0 + (current_gear * 0.15)
 
 func UpdateTorque() -> void:
+	print(torque)
 	var power: float = HP * 745.7
 
 	if rpm > 0:
@@ -169,14 +170,14 @@ func TransmissionController():
 			current_gear_index += 1
 			current_gear = Gears[current_gear_index]
 			rpm *= 0.66
-		elif current_gear_index > 1:
+		elif current_gear_index > 1 and BodyNode.current_speed < speed_limit[current_gear_index - 1]:
 			current_gear_index -= 1
 			current_gear = Gears[current_gear_index]
 			rpm *= 1.5
 			engine_force -= (rpm / max_rpm) * 0.2 * weight
 		
 		# Se a velocidade for 0km/h e estiver na marcha 1, ela vai para a marcha 0.
-		if BodyNode.current_speed == 0.0 and current_gear == 1:
+		if BodyNode.current_speed == 0.0 and current_gear == 1 :
 			current_gear_index -= 1
 			current_gear = Gears[current_gear_index]
 		
