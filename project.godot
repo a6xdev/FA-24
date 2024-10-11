@@ -13,6 +13,7 @@ config_version=5
 config/name="Project Formula"
 run/main_scene="res://scenes/tracks/tsukuba_track.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+run/low_processor_mode=true
 config/icon="res://icon.svg"
 
 [display]
