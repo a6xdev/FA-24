@@ -5,6 +5,7 @@ class_name PlayerConfig
 @export var paused:bool = false
 
 # Configurações do jogador local
+@export_category("Player")
 @export var steer_sensitivity:float = 1.0
 @export var accelerometer_sensitivity:float = 1.0
 @export var volume:float = 1.0
@@ -16,8 +17,14 @@ class_name PlayerConfig
 }
 
 # Configurações do carro
+@export_category("Vehicle")
 @export var ABS:bool = false
-@export var TractionControl:bool = false
+@export var TractionControl = TractionMode.OFF
+enum TractionMode {
+	OFF,
+	MEDIUM,
+	FULL
+}
 @export var automatic_gear:bool = false
 
 # <------------------------------------------------------------------------->

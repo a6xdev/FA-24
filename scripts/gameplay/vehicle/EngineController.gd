@@ -21,16 +21,6 @@ var is_braking:bool = false
 @export var acceleration_rates: Array[int] = [1000,15000, 5000, 6000, 7000, 5000, 4000, 3000]
 @export var speed_limit:Array[int] = [50, 0, 124, 152, 180, 208, 273, 302]
 
-var torque: float = 0.0
-var rpm: float = 0.0
-var downforce: float = 200.0
-var weight: float = 798.0
-var ERS: float = 150.0
-var DRS: float = 100.0
-
-var acceleration: float = 0.0
-var engine_force: float = 0.0  # Inicializa a força do motor
-
 @export_group("RPM")
 @export var max_rpm: float = 14900
 @export var min_rpm: float = 1000
@@ -58,11 +48,31 @@ var brake_temperature:float = min_brake_temperature
 @export_group("Aerodynamic")
 @export var drag_coefficient:float = 0.25
 
+var torque: float = 0.0
+var rpm: float = 0.0
+var downforce: float = 200.0
+var weight: float = 798.0
+var ERS: float = 150.0
+var DRS: float = 100.0
+
+var acceleration: float = 0.0
+var engine_force: float = 0.0  # Inicializa a força do motor
+
+var can_shift_gear:bool = true
+var gear_change_timer:float = 0.0
+
+# <--- Sistema de Tração do veiculo --->
+
+var slip_threshold: float = 0.2
+
+# <--------------------------------------------->
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("test_key"):
 		PlayerConfigNode.ERS = !PlayerConfigNode.ERS
 
 func _physics_process(delta: float) -> void:
+	VehicleForce()
 	UpdateTorque()
 	TransmissionController()
 	UpdateDynamic(delta)
@@ -74,6 +84,13 @@ func _physics_process(delta: float) -> void:
 	BodyNode.current_gear = current_gear
 	BodyNode.current_rpm = rpm
 	
+	if not can_shift_gear:
+		gear_change_timer += delta
+		if gear_change_timer >= 1 :
+			can_shift_gear = true
+			gear_change_timer = 0.0
+	
+func VehicleForce():
 	if PlayerConfigNode.automatic_gear:
 		if Input.is_action_pressed("car_force"):
 			if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
@@ -130,7 +147,6 @@ func get_gear_ratio() -> float:
 	return 1.0 + (current_gear * 0.15)
 
 func UpdateTorque() -> void:
-	print(torque)
 	var power: float = HP * 745.7
 
 	if rpm > 0:
@@ -166,15 +182,18 @@ func TransmissionController():
 				engine_force -= (rpm / max_rpm) * 0.2 * weight
 	else:
 		# <---- Troca de marcha automatica (Gay?) --->
-		if rpm > 14000:
-			current_gear_index += 1
-			current_gear = Gears[current_gear_index]
-			rpm *= 0.66
-		elif current_gear_index > 1 and BodyNode.current_speed < speed_limit[current_gear_index - 1]:
-			current_gear_index -= 1
-			current_gear = Gears[current_gear_index]
-			rpm *= 1.5
-			engine_force -= (rpm / max_rpm) * 0.2 * weight
+		if can_shift_gear:
+			if rpm > 14000:
+				current_gear_index += 1
+				current_gear = Gears[current_gear_index]
+				rpm *= 0.66
+				can_shift_gear = false
+			elif current_gear_index > 1 and BodyNode.current_speed < speed_limit[current_gear_index - 1]:
+				current_gear_index -= 1
+				current_gear = Gears[current_gear_index]
+				rpm *= 1.5
+				engine_force -= (rpm / max_rpm) * 0.2 * weight
+				can_shift_gear = false
 		
 		# Se a velocidade for 0km/h e estiver na marcha 1, ela vai para a marcha 0.
 		if BodyNode.current_speed == 0.0 and current_gear == 1 :
@@ -192,7 +211,7 @@ func TransmissionController():
 			if Input.is_action_pressed("car_force") and BodyNode.current_speed == 0.0:
 				current_gear_index += 1
 				current_gear = Gears[current_gear_index]
-
+				
 	if current_gear == -1:
 		is_reversing = true
 		in_neutral = false
@@ -263,3 +282,7 @@ func BrakeController(delta:float) -> void:
 		rpm -= deceleration_rate * delta * 2
 		if rpm < min_rpm:
 			rpm = min_rpm
+
+# <---------------------------------------------->
+# 	<-----------------Traction----------------->
+# <---------------------------------------------->
