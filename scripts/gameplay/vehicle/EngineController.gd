@@ -63,6 +63,7 @@ var gear_change_timer:float = 0.0
 
 # <--- Sistema de Tração do veiculo --->
 
+@export_group("Traction Control")
 var slip_threshold: float = 0.2
 
 # <--------------------------------------------->
