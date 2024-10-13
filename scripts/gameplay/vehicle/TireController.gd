@@ -22,7 +22,8 @@ var TractionControl:bool = false
 func _physics_process(delta: float) -> void:
 	if TireScreechAudio:
 		if get_skidinfo() <= DeslizePneu:
-			TireScreechAudio.play()
+			if not TireScreechAudio.playing:
+				TireScreechAudio.play()
 		else:
 			TireScreechAudio.stop()
 		
