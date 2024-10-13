@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://b4myuj2n5iowg"]
+[gd_scene load_steps=4 format=3 uid="uid://b4myuj2n5iowg"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/UI/SettingsScreen.gd" id="1_rnje7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8jdc"]
+bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.756863)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwb6c"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.436639, 0, 0, 1)
+border_color = Color(0, 0, 0, 1)
 
 [node name="OptionsScreen" type="Control"]
 layout_mode = 3
@@ -12,6 +21,7 @@ grow_vertical = 2
 script = ExtResource("1_rnje7")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,6 +43,8 @@ offset_right = 300.0
 offset_bottom = 256.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_a8jdc")
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_qwb6c")
 tab_alignment = 1
 current_tab = 1
 
