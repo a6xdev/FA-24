@@ -48,9 +48,15 @@ func _physics_process(delta: float) -> void:
 	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
 
 func ComputerController(delta):
-	current_steering = lerp(current_steering, Input.get_axis("car_right", "car_left"), Config.steer_sensitivity * delta)
+	var input = Input.get_axis("car_right", "car_left")
+	current_steering = lerp(current_steering, input, 2.0 * (delta * 5))
 	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
-	VehicleBody.steering = move_toward(VehicleBody.steering, Input.get_axis("car_right", "car_left") * current_tire_angle, delta * max_steering_speed)
+	
+	if input == 0.0:
+		VehicleBody.steering = move_toward(VehicleBody.steering, 0 * current_tire_angle, delta * max_steering_speed)
+	else:
+		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * max_steering_speed)
+		
 
 func MobileController(delta):
 	var accelerometer_data = Input.get_accelerometer()
