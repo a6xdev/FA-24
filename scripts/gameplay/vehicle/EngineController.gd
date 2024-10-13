@@ -143,6 +143,14 @@ func VehicleForce():
 		else:
 			BackTireLeft.engine_force = 0.0
 			BackTireRight.engine_force = 0.0
+			
+		if current_gear <= 2 and current_gear > 0 and BodyNode.current_speed <= 40:
+			if BodyNode.steering >= 0.4:
+				if Input.is_action_pressed("car_force"):
+					BackTireRight.engine_force = engine_force * 50
+			if BodyNode.steering >= -0.4:
+				if Input.is_action_pressed("car_force"):
+					BackTireLeft.engine_force = engine_force * 50
 
 func get_gear_ratio() -> float:
 	return 1.0 + (current_gear * 0.15)
