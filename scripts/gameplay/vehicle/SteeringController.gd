@@ -49,7 +49,7 @@ func _physics_process(delta: float) -> void:
 
 func ComputerController(delta):
 	var input = Input.get_axis("car_right", "car_left")
-	current_steering = lerp(current_steering, input, 2.0 * (delta * 5))
+	current_steering = lerp(current_steering, input, 1.0 * (delta * 5))
 	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
 	
 	if input == 0.0:
