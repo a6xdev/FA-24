@@ -46,10 +46,9 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_a8jdc")
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_qwb6c")
 tab_alignment = 1
-current_tab = 1
+current_tab = 0
 
 [node name="Controls" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 tab_alignment = 1
 metadata/_tab_index = 0
@@ -108,6 +107,7 @@ layout_mode = 2
 text = "0.0"
 
 [node name="Difficulty" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 tab_alignment = 1
 metadata/_tab_index = 1
