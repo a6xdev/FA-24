@@ -28,11 +28,7 @@ var current_steering:float
 var current_tire_angle:float
 
 # accelerometer
-var smoothing_factor: float = 0.2  # Fator de suavização
-var previous_steering_angle: float = 0.0
-var deadzone:float = 0.05
-
-var max_rotation: float = 0.5
+var max_rotation: float = 2.4
 
 func _physics_process(delta: float) -> void:
 	
@@ -58,23 +54,31 @@ func ComputerController(delta):
 		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * max_steering_speed)
 		
 
+@export var smoothing_factor = 0.1  # Taxa de suavização do filtro
+var previous_steering_angle: float = 0.0
+var deadzone:float = 0.05
+var filtered_accel_value = 0.0  # Valor suavizado do acelerômetro
+
 func MobileController(delta):
-	var accelerometer_data = Input.get_accelerometer()
-	var smoothed_steering_angle = lerp(previous_steering_angle, accelerometer_data.x, smoothing_factor)
-	smoothed_steering_angle *= Config.steer_sensitivity
+	max_steering_speed = 1
+	var accelerometer_data = Input.get_accelerometer().x
+	filtered_accel_value = lerp(filtered_accel_value, accelerometer_data, smoothing_factor)
+	var smoothed_steering_angle = lerp(previous_steering_angle, filtered_accel_value, Config.accelerometer_sensitivity)
+	smoothed_steering_angle *= Config.accelerometer_sensitivity
 	smoothed_steering_angle = clamp(smoothed_steering_angle, -max_rotation, max_rotation)
 	
+	# Zona morta (deadzone)
 	if abs(smoothed_steering_angle) < deadzone:
 		smoothed_steering_angle = 0.0
 	else:
 		var sign = sign(smoothed_steering_angle)
 		var adjusted_value = abs(smoothed_steering_angle) - deadzone
-		var scaled_value = adjusted_value / (1.0 - deadzone) # Normalizar o valor fora da deadzone
+		var scaled_value = adjusted_value / (1.0 - deadzone)
 		smoothed_steering_angle = sign * scaled_value
-		
-	current_steering = - smoothed_steering_angle
-	
+
+	current_steering = -smoothed_steering_angle
+
 	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
-	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle, delta * max_steering_speed)
-	
+	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle * current_tire_angle, delta * max_steering_speed)
+
 	
