@@ -31,6 +31,8 @@ enum TractionMode {
 # Data
 # <------------------------------------------------------------------------->
 
+func _process(delta: float) -> void:
+	$"../../../Label2".text = str(accelerometer_sensitivity)
 func save_config():
 	var file = FileAccess.open(save_path, FileAccess.WRITE)
 	file.store_var({

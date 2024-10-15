@@ -28,13 +28,15 @@ var current_steering:float
 var current_tire_angle:float
 
 # accelerometer
-var max_rotation: float = 2.4
+var max_rotation: float = 1.0
 
 func _physics_process(delta: float) -> void:
 	
 	# Tire controller
 	var interpolation_factor = min(1.0, VehicleBody.current_speed / (speed_threshold * 1.0))
+	var tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
 	current_tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
+	current_steering_speed = lerp(min_steering_speed, max_steering_speed, interpolation_factor)
 	
 	if Input.get_accelerometer():
 		MobileController(delta)
@@ -42,21 +44,23 @@ func _physics_process(delta: float) -> void:
 		ComputerController(delta)
 	
 	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
+	
+	print(current_steering_speed)
 
 func ComputerController(delta):
 	var input = Input.get_axis("car_right", "car_left")
 	current_steering = lerp(current_steering, input, 1.0 * (delta * 5))
-	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
+	#current_steering_speed = clamp(min_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
 	
 	if input == 0.0:
-		VehicleBody.steering = move_toward(VehicleBody.steering, 0 * current_tire_angle, delta * max_steering_speed)
+		VehicleBody.steering = move_toward(VehicleBody.steering, 0 * current_tire_angle, delta * current_steering_speed)
 	else:
-		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * max_steering_speed)
+		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * current_steering_speed)
 		
 
 @export var smoothing_factor = 0.1  # Taxa de suavização do filtro
 var previous_steering_angle: float = 0.0
-var deadzone:float = 0.05
+var deadzone:float = 0.1
 var filtered_accel_value = 0.0  # Valor suavizado do acelerômetro
 
 func MobileController(delta):
@@ -64,7 +68,8 @@ func MobileController(delta):
 	var accelerometer_data = Input.get_accelerometer().x
 	filtered_accel_value = lerp(filtered_accel_value, accelerometer_data, smoothing_factor)
 	var smoothed_steering_angle = lerp(previous_steering_angle, filtered_accel_value, Config.accelerometer_sensitivity)
-	smoothed_steering_angle *= Config.accelerometer_sensitivity
+	
+	# A sensibilidade agora afeta a velocidade de ajuste do volante e não o limite de rotação
 	smoothed_steering_angle = clamp(smoothed_steering_angle, -max_rotation, max_rotation)
 	
 	# Zona morta (deadzone)
@@ -75,10 +80,7 @@ func MobileController(delta):
 		var adjusted_value = abs(smoothed_steering_angle) - deadzone
 		var scaled_value = adjusted_value / (1.0 - deadzone)
 		smoothed_steering_angle = sign * scaled_value
-
-	current_steering = -smoothed_steering_angle
-
-	current_steering_speed = clamp(max_steering_speed - (VehicleBody.current_speed / speed_threshold), min_steering_speed, max_steering_speed)
-	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle * current_tire_angle, delta * max_steering_speed)
-
 	
+	current_steering = -smoothed_steering_angle
+	
+	VehicleBody.steering = move_toward(VehicleBody.steering, -smoothed_steering_angle * current_tire_angle, delta * current_steering_speed)
