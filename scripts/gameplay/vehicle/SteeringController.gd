@@ -44,8 +44,6 @@ func _physics_process(delta: float) -> void:
 		ComputerController(delta)
 	
 	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
-	
-	print(current_steering_speed)
 
 func ComputerController(delta):
 	var input = Input.get_axis("car_right", "car_left")
