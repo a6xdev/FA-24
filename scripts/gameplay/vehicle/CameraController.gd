@@ -11,7 +11,6 @@ enum CameraMode {
 var is_looking_back = false  # Flag para saber se está olhando para trás
 
 func _process(delta: float) -> void:
-	print(current_camera_mode)
 	# Se o jogador pressiona o botão "look back"
 	if Input.is_action_pressed("look_back") and not is_looking_back:
 		animation_player.play("LOOK_BACK")
