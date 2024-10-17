@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b4myuj2n5iowg"]
 
-[ext_resource type="Script" path="res://scripts/gameplay/UI/SettingsScreen.gd" id="1_rnje7"]
+[ext_resource type="Script" path="res://scripts/gameplay/VehicleSystem/UI/SettingsScreen.gd" id="1_rnje7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8jdc"]
 bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.756863)
