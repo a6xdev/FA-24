@@ -51,7 +51,7 @@ func _physics_process(delta: float) -> void:
 		
 	wheel_friction_slip = current_grip
 	
-	#print(self.name, ": ", current_grip)
+	print(self.name, ": ", current_grip)
 
 func UpdateGrip():
 	current_grip = max_grip * temperature * (10.0 - wear)
