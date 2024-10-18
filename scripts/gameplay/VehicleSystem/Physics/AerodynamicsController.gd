@@ -28,10 +28,10 @@ var downforce_coefficients = {
 }
 
 var drag_coefficients = {
-	WingType.HIGH_AERO_WING: 0.05,  # Mais arrasto, menor velocidade máxima
-	WingType.LOW_AERO_WING: 0.02,   # Menos arrasto, maior velocidade
-	WingType.MEDIUM_AERO_WING: 0.03, # Equilibrado
-	WingType.WET_WING: 0.04         # Um pouco mais de arrasto
+	WingType.HIGH_AERO_WING: 0.005,  # Mais arrasto, menor velocidade máxima
+	WingType.LOW_AERO_WING: 0.002,   # Menos arrasto, maior velocidade
+	WingType.MEDIUM_AERO_WING: 0.003, # Equilibrado
+	WingType.WET_WING: 0.004 # Um pouco mais de arrasto
 }
 
 var downforce: float = 0.0
@@ -54,15 +54,11 @@ func DownforceController(delta: float) -> void:
 	VehicleBody.constant_force = Vector3(0, 0, 0)
 	VehicleBody.add_constant_force(Vector3(0, -downforce, 0))
 
-	print("Constan Force: ", VehicleBody.constant_force )
+	#print("Constan Force: ", VehicleBody.constant_force )
 
 func DragController(delta: float) -> void:
 	var current_speed_squared = VehicleBody.current_speed * VehicleBody.current_speed
 	drag_force = 0.5 * drag_coefficient * air_density * frontal_area * current_speed_squared
 	drag_force = clamp(drag_force, 0, max_drag_force)
-
+#
 	VehicleBody.add_constant_force(Vector3(0, 0, drag_force))
-
-	# Debug: Exibir informações do arrasto
-	#print("Current Speed: ", VehicleBody.current_speed)
-	#print("Calculated Drag Force: ", drag_force)
