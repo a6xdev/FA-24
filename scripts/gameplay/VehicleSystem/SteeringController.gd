@@ -6,7 +6,7 @@ class_name SteeringController
 @export var steeringModel:Node3D
 
 @export_group("Direction Settings")
-@export var speed_threshold:int = 120
+@export_range(0, 350) var speed_threshold:int = 120
 @export_subgroup("Steering Angle")
 @export var max_steering_angle:float = 300
 @export var max_tire_angle:float = 0.6
@@ -38,10 +38,13 @@ func _physics_process(delta: float) -> void:
 	current_tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
 	current_steering_speed = lerp(min_steering_speed, max_steering_speed, interpolation_factor)
 	
-	if Input.get_accelerometer():
-		MobileController(delta)
+	if not VehicleBody.debug:
+		if Input.get_accelerometer():
+			MobileController(delta)
+		else:
+			ComputerController(delta)
 	else:
-		ComputerController(delta)
+		VehicleBody.steering = 0.0
 	
 	steeringModel.rotation_degrees.z = -current_steering * max_steering_angle
 
