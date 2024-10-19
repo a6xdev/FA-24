@@ -20,12 +20,16 @@ var is_braking:bool = false
 @export_group("Acceleration and Speed Limits")
 @export var acceleration_rates: Array[int] = [1000,15000, 5000, 6000, 7000, 5000, 4000, 3000]
 @export var speed_limit:Array[int] = [50, 0, 124, 152, 180, 208, 273, 302]
+	#								  R,  N,  1°,  2°,  3°,  4°,  5°,  6°
 
 @export_group("RPM")
 @export var max_rpm: float = 14900
 @export var min_rpm: float = 1000
 @export var idle_rpm: float = 500
 @export var deceleration_rate: float = 300.0
+#@export var gear_ratios: Array = [3.5, 2.8, 2.0, 1.5, 1.2, 1.0]
+@export var gear_ratios: Array = [2.0, 1.4, 1.2, 1.0, 1.1, 1.2, 1.3]
+#								  1°,  2°,  3°,  4°,  5°,  6°
 
 @export_group("Tires")
 @export var BackTireLeft: VehicleWheel3D
@@ -73,13 +77,17 @@ func _input(event: InputEvent) -> void:
 		PlayerConfigNode.ERS = !PlayerConfigNode.ERS
 
 func _physics_process(delta: float) -> void:
-	VehicleForce()
-	UpdateTorque()
-	TransmissionController()
-	UpdateDynamic(delta)
-	UpdateRPM(delta)
-	
-	BrakeController(delta)
+	if not BodyNode.debug:
+		InputController(delta)
+		UpdateTorque()
+		TransmissionController()
+		UpdateDynamic(delta)
+		UpdateRPM(delta)
+		
+		BrakeController(delta)
+	else:
+		BackTireLeft.brake = 100
+		BackTireRight.brake = 100
 
 	# Passa as informações desse Node para o Node principal
 	BodyNode.current_gear = current_gear
@@ -91,7 +99,7 @@ func _physics_process(delta: float) -> void:
 			can_shift_gear = true
 			gear_change_timer = 0.0
 	
-func VehicleForce():
+func InputController(delta:float):
 	if PlayerConfigNode.automatic_gear:
 		if Input.is_action_pressed("car_force"):
 			if is_engine_on and rpm > 0 and not in_neutral and not is_reversing:
@@ -151,9 +159,6 @@ func VehicleForce():
 			elif BodyNode.steering <= -0.4:
 				if Input.is_action_pressed("car_force"):
 					BackTireLeft.engine_force *= 350
-
-func get_gear_ratio() -> float:
-	return 1.0 + (current_gear * 0.15)
 
 func UpdateTorque() -> void:
 	var power: float = HP * 745.7
@@ -236,7 +241,7 @@ func UpdateDynamic(delta) -> void:
 	
 	if torque != null and gear_ratio != null:
 		var force_tires: float = torque * gear_ratio
-		var drag_force: float = 0.05 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)
+		var drag_force: float = 0.01 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)  # Menor arrasto
 		var total_force: float = force_tires + downforce - drag_force
 		
 		if ERS_on:
@@ -247,14 +252,24 @@ func UpdateDynamic(delta) -> void:
 		
 		if BodyNode.current_speed >= speed_limit[current_gear + 1]:
 			engine_force = 0.0
-			
-		if BodyNode.current_speed > 200:
-			engine_force *= 0.95
-		elif BodyNode.current_speed > 300:
+		
+		if BodyNode.current_speed > 300:
+			engine_force *= 0.90
+		elif BodyNode.current_speed > 340:
 			engine_force *= 0.85
+		
+		# Dimini a força do motor em curvas, para dar um aspecto mais realista
+		var steering_angle = abs(BodyNode.steering)
+		if steering_angle > 0.5:
+			engine_force *= (1.0 - steering_angle / 150) # 150: max_steering_angle
+		
+		# Limita o RPM quando o carro está perdendo tração
+		var tire_grip = (BackTireLeft.get_skidinfo() + BackTireRight.get_skidinfo()) / 2
+		if tire_grip <= 0.1:
+			rpm -= deceleration_rate * delta
 
 func UpdateRPM(delta) -> void:
-	var gear_index:int = max(current_gear + 1, 0)
+	var gear_index: int = max(current_gear + 1, 0)
 	var acceleration_rate = acceleration_rates[gear_index]
 	
 	if is_engine_on:
@@ -276,10 +291,9 @@ func UpdateRPM(delta) -> void:
 		rpm -= (deceleration_rate * 2) * delta
 		if rpm < 0.0:
 			rpm = 0.0
-			
+	
 	var random_fluctuation = randf_range(-5, 5)
 	rpm += random_fluctuation
-	
 	rpm = clamp(rpm, min_rpm, max_rpm)
 
 # <---------------------------------------------->
@@ -295,3 +309,14 @@ func BrakeController(delta:float) -> void:
 # <---------------------------------------------->
 # 	<-----------------Traction----------------->
 # <---------------------------------------------->
+
+func get_gear_ratio() -> float:
+	if current_gear == 0:
+		return 0.0
+	
+	if current_gear == 7:
+		return 1.3
+	
+	if current_gear > 0 and current_gear < gear_ratios.size():
+		return gear_ratios[current_gear - 1]
+	return 1.
