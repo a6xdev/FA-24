@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Formula Gamma"
-run/main_scene="res://scenes/tracks/track_003_panamericano.tscn"
+run/main_scene="res://scenes/tracks/track_001_untitled.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/low_processor_mode=true
 config/icon="res://icon.svg"
@@ -82,3 +82,5 @@ SwitchCamera={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
+anti_aliasing/quality/msaa_3d=2
+occlusion_culling/use_occlusion_culling=true
