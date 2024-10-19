@@ -1,6 +1,8 @@
 extends VehicleBody3D
 class_name BodyController
 
+@export var debug:bool = false
+
 # <-- Transmission -->
 var current_gear:int
 var current_rpm:int
