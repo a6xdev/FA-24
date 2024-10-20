@@ -160,7 +160,6 @@ func __TRANSMISSION__():
 
 func TransmissionController():
 	var current_gear_index: int = Gears.find(current_gear)
-	
 	# <---- Troca de marcha manuel ---->
 	if not PlayerConfigNode.automatic_gear:
 		if Input.is_action_just_released("upshift"):
@@ -168,13 +167,14 @@ func TransmissionController():
 				current_gear_index += 1
 				current_gear = Gears[current_gear_index]
 				rpm *= 0.66
+		
 		elif Input.is_action_just_released("downshift"):
 			if current_gear_index > 0:
 				current_gear_index -= 1
 				current_gear = Gears[current_gear_index]
 				engine_force -= (rpm / max_rpm) * 0.2 * weight
 				rpm *= 1.3
-				
+	
 	if current_gear == -1:
 		is_reversing = true
 		in_neutral = false
@@ -209,13 +209,15 @@ func DynamicEngineController(delta) -> void:
 		elif BodyNode.current_speed > 300:
 			engine_force *= 0.85
 
-		#if steering_angle:
-			#engine_force *= (1.0 - steering_angle / 20)
-
+		var steering_angle = abs(BodyNode.steering) 
+		if steering_angle:
+			rpm *= (1.0 - steering_angle / 20)
 
 func rpm_controller(delta) -> void:
 	var gear_index:int = max(current_gear + 1, 0)
 	var acceleration_rate = acceleration_rates[current_gear]
+	
+	#print(high_rpm_timer)
 	
 	if ignition:
 		if Input.is_action_pressed("car_force"):
@@ -224,18 +226,16 @@ func rpm_controller(delta) -> void:
 			if rpm > max_rpm:
 				rpm = max_rpm
 		elif Input.is_action_pressed("car_brake"):
-			if is_reversing:
-				var rpm_change = acceleration_rate * delta
-				rpm += rpm_change
-				if rpm > 6000:
-					rpm = 6000
-			else:
-				if rpm > 6000:
-					rpm -= deceleration_rate * delta 
-					if rpm < 6000:
-						rpm = 6000
-		else:
 			rpm -= deceleration_rate * delta
+			if rpm < min_rpm:
+				rpm = min_rpm
+				
+		if Input.is_action_pressed("car_force") and is_reversing:
+			var rpm_change = (acceleration_rate * 2) * delta
+			rpm += rpm_change
+			if rpm >= 4000:
+				rpm = 4000
+				
 	else:
 		rpm -= (deceleration_rate * 2) * delta
 		if rpm < 0.0:
