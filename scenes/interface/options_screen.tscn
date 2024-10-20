@@ -100,7 +100,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 max_value = 1.0
 step = 0.1
-value = 0.2
+value = 0.1
 
 [node name="Value" type="Label" parent="TabContainer/Controls/MarginContainer/VBoxContainer/AccelSensititivy"]
 layout_mode = 2
