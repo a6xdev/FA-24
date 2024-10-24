@@ -89,6 +89,6 @@ func update_engine_sound(current_rpm: float, delta):
 	sound_high_rpm.pitch_scale = target_pitch
 
 func initialize_audio_volumes():
-	sound_low_rpm.volume_db = target_volume_low  # ou -80.0 para mudo
-	sound_mid_rpm.volume_db = -80.0  # Inicializa como mudo
-	sound_high_rpm.volume_db = -80.0  # Inicializa como mudo
+	sound_low_rpm.volume_db = target_volume_low
+	sound_mid_rpm.volume_db = -20.0
+	sound_high_rpm.volume_db = -20.0 
