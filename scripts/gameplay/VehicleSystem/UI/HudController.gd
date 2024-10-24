@@ -13,6 +13,10 @@ class_name HudController
 @export var SpeedLabel:Label
 @export var COLOR_RECT:ColorRect
 
+@export_group("Steering Interface")
+@export var SI_RPM:Label
+@export var SI_GEAR:Label
+
 var current_state:state = state.WHITE
 enum state {
 	WHITE,
@@ -29,13 +33,17 @@ func _physics_process(delta: float) -> void:
 func GearHUD():
 	if BodyNode.current_gear == -1:
 		GearLabel.text = "R"
+		SI_GEAR.text = "R"
 	elif BodyNode.current_gear == 0:
 		GearLabel.text = "N"
+		SI_GEAR.text = "N"
 	else:
 		GearLabel.text = str(BodyNode.current_gear)
+		SI_GEAR.text = str(BodyNode.current_gear)
 		
 func rpmHUD():
 	rpmLabel.text = str(BodyNode.current_rpm)
+	SI_RPM.text = str(BodyNode.current_rpm)
 	
 	if  VehicleEngine.rpm >= 14000:
 		current_state = state.BLUE
