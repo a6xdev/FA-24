@@ -211,7 +211,7 @@ func DynamicEngineController(delta) -> void:
 
 		var steering_angle = abs(BodyNode.steering) 
 		if steering_angle:
-			rpm *= (1.0 - steering_angle / 20)
+			rpm *= (1.0 - steering_angle / 25)
 
 func rpm_controller(delta) -> void:
 	var gear_index:int = max(current_gear + 1, 0)
@@ -226,9 +226,18 @@ func rpm_controller(delta) -> void:
 			if rpm > max_rpm:
 				rpm = max_rpm
 		elif Input.is_action_pressed("car_brake"):
+			rpm -= (deceleration_rate * 4) * delta
+			if rpm < min_rpm:
+				rpm = min_rpm
+		else:
 			rpm -= deceleration_rate * delta
 			if rpm < min_rpm:
 				rpm = min_rpm
+				
+			if current_gear == 0:
+				rpm -= (deceleration_rate * 4) * delta
+				if rpm < min_rpm:
+					rpm = min_rpm
 				
 		if Input.is_action_pressed("car_force") and is_reversing:
 			var rpm_change = (acceleration_rate * 2) * delta
