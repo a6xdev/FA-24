@@ -34,7 +34,8 @@ var is_braking:bool = false
 @export var FrontTireRight: VehicleWheel3D
 
 @export_group("Brake Settings")
-@export var brake_force:float = 0
+@export var brake_force:float = 10
+@export var engine_brake:float = 5.0
 @export_subgroup("Brake Temperature")
 @export var max_brake_temperature: float = 1000.0
 @export var min_brake_temperature: float = 20.0
@@ -192,18 +193,21 @@ func __ENGINE__():
 
 func DynamicEngineController(delta) -> void:
 	var gear_ratio: float = get_gear_ratio()
-	
+
 	if torque != null and gear_ratio != null:
 		var force_tires: float = torque * gear_ratio
-		#var drag_force: float = 0.05 * drag_coefficient * (BodyNode.current_speed * BodyNode.current_speed)
-		var total_force: float = force_tires
+		var total_force: float = force_tires 
 		
 		acceleration = total_force / weight
 		engine_force = acceleration * weight
 		
-		if BodyNode.current_speed >= speed_limit[current_gear + 1]:
+		var speed_limit_for_current_gear = speed_limit[current_gear + 1]
+		if BodyNode.current_speed >= speed_limit_for_current_gear:
 			engine_force = 0.0
-			
+		else:
+			var rpm_factor = (rpm/max_rpm)
+			acceleration *=(1.0 - rpm_factor)
+
 		if BodyNode.current_speed > 200:
 			engine_force *= 0.95
 		elif BodyNode.current_speed > 300:
@@ -216,8 +220,6 @@ func DynamicEngineController(delta) -> void:
 func rpm_controller(delta) -> void:
 	var gear_index:int = max(current_gear + 1, 0)
 	var acceleration_rate = acceleration_rates[current_gear]
-	
-	#print(high_rpm_timer)
 	
 	if ignition:
 		if Input.is_action_pressed("car_force"):
