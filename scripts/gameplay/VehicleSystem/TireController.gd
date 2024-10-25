@@ -62,10 +62,10 @@ func _physics_process(delta: float) -> void:
 
 	wheel_friction_slip = current_grip  # Aplicar o grip atual
 	
-	print("GRIP: ", current_grip)
-	print("TEMP: ", temperature)
-	print("WEAR: ", wear)
-	print("PRESSURE: ", tire_pressure, " psi")
+	#print("GRIP: ", current_grip)
+	#print("TEMP: ", temperature)
+	#print("WEAR: ", wear)
+	#print("PRESSURE: ", tire_pressure, " psi")
 
 func GripUpdate() -> void:
 	var pressure_factor: float = 1.0
