@@ -26,6 +26,8 @@ enum TractionMode {
 	FULL
 }
 @export var automatic_gear:bool = false
+@export var throttle_force = 1
+@export var brake_force = 1
 
 # <------------------------------------------------------------------------->
 # Data
