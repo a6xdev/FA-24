@@ -2,9 +2,7 @@ extends Node
 class_name HudController
 
 @export var PlayerConfigNode:PlayerConfig
-
 @export var BodyNode:BodyController
-@export var VehicleEngine:EngineController
 
 @export_group("HUD Controller")
 @export var PlayerInterface:CanvasLayer
@@ -16,6 +14,10 @@ class_name HudController
 @export_group("Steering Interface")
 @export var SI_RPM:Label
 @export var SI_GEAR:Label
+
+@export_group("CarInputs Interface")
+@export var throttle:ProgressBar
+@export var brake:ProgressBar
 
 var current_state:state = state.WHITE
 enum state {
@@ -29,6 +31,7 @@ func _physics_process(delta: float) -> void:
 	GearHUD()
 	rpmHUD()
 	SpeedHud()
+	CarInputs()
 	
 func GearHUD():
 	if BodyNode.current_gear == -1:
@@ -45,13 +48,13 @@ func rpmHUD():
 	rpmLabel.text = str(BodyNode.current_rpm)
 	SI_RPM.text = str(BodyNode.current_rpm)
 	
-	if  VehicleEngine.rpm >= 14000:
+	if  BodyNode.current_rpm >= 12000:
 		current_state = state.BLUE
 		COLOR_RECT.modulate = Color('#003aff')
-	elif VehicleEngine.rpm >= 12000:
+	elif BodyNode.current_rpm >= 11000:
 		current_state = state.RED
 		COLOR_RECT.modulate = Color('#ff0000')
-	elif VehicleEngine.rpm >= 10000:
+	elif BodyNode.current_rpm >= 10000:
 		current_state = state.GREEN
 		COLOR_RECT.modulate = Color('#04ff00')
 	else:
@@ -60,3 +63,7 @@ func rpmHUD():
 
 func SpeedHud():
 	SpeedLabel.text = str(BodyNode.current_speed)
+
+func CarInputs():
+	throttle.value = BodyNode.throttle_input
+	brake.value = BodyNode.brake_input
