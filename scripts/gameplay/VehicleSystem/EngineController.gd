@@ -1,5 +1,4 @@
 extends Node
-class_name EngineController
 
 @export var BodyNode: BodyController
 @export var PlayerConfigNode:PlayerConfig
