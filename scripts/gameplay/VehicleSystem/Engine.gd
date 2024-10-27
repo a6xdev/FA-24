@@ -37,13 +37,6 @@ class_name EngineController
 @export var wheel_radius:float = 0.331
 @export var acceleration:float = 0.0
 
-@export_group("Slowdown and Loss")
-@export var air_density = 1.225 # Densidade do ar em kg/m³ ao nível do mar
-@export var friction_loss:float = 0.1
-@export var drag_coefficient:float = 0.35
-@export var rolling_resistance:float = 0.015
-@export var frontal_area: float = 1.5
-
 @export_group("Brake")
 @export var brake_force = 10
 
