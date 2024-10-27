@@ -6,10 +6,11 @@ extends Camera3D
 
 enum CameraMode {
 	COCKPIT,
-	TV_POD,
+	ONBOARD,
+	TV_SIDE_POD
 }
 
-@export var current_camera_mode = CameraMode.TV_POD
+@export var current_camera_mode = CameraMode.ONBOARD
 var is_looking_back = false  # Flag para saber se está olhando para trás
 
 # Variável para armazenar o estado anterior da câmera de depuração
@@ -111,16 +112,21 @@ func _process(delta: float) -> void:
 		match current_camera_mode:
 			CameraMode.COCKPIT:
 				animation_player.play("COCKPIT")
-			CameraMode.TV_POD:
-				animation_player.play("TV_POD")
+			CameraMode.ONBOARD:
+				animation_player.play("ONBOARD")
+			CameraMode.TV_SIDE_POD:
+				animation_player.play("TV_SIDE_POD")
 		is_looking_back = false
 
 func SwitchCamera():
 	match current_camera_mode:
 		CameraMode.COCKPIT:
-			animation_player.play("TV_POD")
-			current_camera_mode = CameraMode.TV_POD
-		CameraMode.TV_POD:
+			animation_player.play("ONBOARD")
+			current_camera_mode = CameraMode.ONBOARD
+		CameraMode.ONBOARD:
+			animation_player.play("TV_SIDE_POD")
+			current_camera_mode = CameraMode.TV_SIDE_POD
+		CameraMode.TV_SIDE_POD:
 			animation_player.play("COCKPIT")
 			current_camera_mode = CameraMode.COCKPIT
 
@@ -175,5 +181,7 @@ func _restore_camera_animation():
 	match current_camera_mode:
 		CameraMode.COCKPIT:
 			animation_player.play("COCKPIT")
-		CameraMode.TV_POD:
-			animation_player.play("TV_POD")
+		CameraMode.ONBOARD:
+			animation_player.play("ONBOARD")
+		CameraMode.TV_SIDE_POD:
+			animation_player.play("TV_SIDE_POD")
