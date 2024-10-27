@@ -59,10 +59,10 @@ func ComputerController(delta):
 		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * current_steering_speed)
 		
 
-@export var smoothing_factor = 0.1  # Taxa de suavização do filtro
+@export var smoothing_factor = 0.2  # Taxa de suavização do filtro
 var previous_steering_angle: float = 0.0
 var deadzone:float = 0.1
-var filtered_accel_value = 0.0  # Valor suavizado do acelerômetro
+var filtered_accel_value = 0.1
 
 func MobileController(delta):
 	max_steering_speed = 1
@@ -70,7 +70,6 @@ func MobileController(delta):
 	filtered_accel_value = lerp(filtered_accel_value, accelerometer_data, smoothing_factor)
 	var smoothed_steering_angle = lerp(previous_steering_angle, filtered_accel_value, Config.accelerometer_sensitivity)
 	
-	# A sensibilidade agora afeta a velocidade de ajuste do volante e não o limite de rotação
 	smoothed_steering_angle = clamp(smoothed_steering_angle, -max_rotation, max_rotation)
 	
 	# Zona morta (deadzone)
