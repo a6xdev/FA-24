@@ -7,8 +7,7 @@ class_name SoundsController
 @export var sound_low_rpm: AudioStreamPlayer
 @export var sound_mid_rpm: AudioStreamPlayer
 @export var sound_high_rpm: AudioStreamPlayer
-@export var sound_transition_low_mid: AudioStreamPlayer
-@export var sound_transition_mid_high: AudioStreamPlayer
+@export var EletricEngine: AudioStreamPlayer
 
 var low_rpm_limit = 2000.0
 var mid_rpm_limit = 7000.0
@@ -22,11 +21,17 @@ var target_volume_mid: float = -15.0
 var target_volume_high: float = -10.0
 var transition_speed: float = 1.0
 
+var target_volume_electric: float = -15.0
+var min_volume_electric: float = -30.0
+var electric_volume_transition_speed: float = 3.0
+
+
 func _ready() -> void:
 	initialize_audio_volumes()
 
 func _physics_process(delta: float):
 	update_engine_sound(BodyNode.current_rpm,delta)
+	update_eletric_engine(BodyNode.current_rpm, delta)
 
 func update_engine_sound(current_rpm: float, delta):
 	var target_pitch: float
@@ -88,7 +93,20 @@ func update_engine_sound(current_rpm: float, delta):
 	sound_mid_rpm.pitch_scale = target_pitch
 	sound_high_rpm.pitch_scale = target_pitch
 
+func update_eletric_engine(current_rpm:float, delta:float):
+	var electric_pitch = lerp(1.0, 3.0, current_rpm / high_rpm_limit)
+	var target_electric_volume = target_volume_electric
+	EletricEngine.pitch_scale = electric_pitch
+	
+	if current_rpm < low_rpm_limit:
+		target_electric_volume = min_volume_electric
+		
+	EletricEngine.volume_db = lerp(EletricEngine.volume_db, target_electric_volume, electric_volume_transition_speed * delta)
+	if not EletricEngine.playing:
+		EletricEngine.play()
+
 func initialize_audio_volumes():
 	sound_low_rpm.volume_db = target_volume_low
 	sound_mid_rpm.volume_db = -20.0
 	sound_high_rpm.volume_db = -20.0 
+	EletricEngine.volume_db = -20
