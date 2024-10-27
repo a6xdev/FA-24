@@ -38,13 +38,13 @@ var tire_pressure: float = 32.0
 @export_group("Wear")
 @export var wear_rate: float = 0.01  # Taxa de desgaste do pneu
 
-var wear: float = 0.0  # Estado de desgaste do pneu
-var temperature: float = 90  # Temperatura inicial
+var wear: float = 0.0
+var temperature: float = 90
 
 @export_category("Tire Audio Controller")
 @export var TireScreechAudio: AudioStreamPlayer
 
-var current_grip: float = max_grip  # Aderência atual do pneu
+var current_grip: float = max_grip
 
 var TractionControl: bool = false
 
@@ -60,12 +60,12 @@ func _physics_process(delta: float) -> void:
 		else:
 			TireScreechAudio.stop()
 
-	wheel_friction_slip = current_grip  # Aplicar o grip atual
+	wheel_friction_slip = current_grip
 	
-	#print("GRIP: ", current_grip)
-	#print("TEMP: ", temperature)
-	#print("WEAR: ", wear)
-	#print("PRESSURE: ", tire_pressure, " psi")
+	print("GRIP: ", current_grip)
+	print("TEMP: ", temperature)
+	print("WEAR: ", wear)
+	print("PRESSURE: ", tire_pressure, " psi")
 
 func GripUpdate() -> void:
 	var pressure_factor: float = 1.0
