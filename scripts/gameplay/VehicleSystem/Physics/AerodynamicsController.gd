@@ -6,11 +6,12 @@ class_name AerodynamicsController
 @export var current_wing_type:WingType
 @export var max_downforce: float = 1000.0 # Limite máximo de downforce para evitar valores absurdos
 
-@export_group("Drag")
-@export var drag_coefficient: float = 0.3  # Coeficiente de arrasto
-@export var frontal_area: float = 2.2  # Área frontal em m²
-@export var air_density: float = 1.225  # Densidade do ar em kg/m³ ao nível do mar
-@export var max_drag_force: float = 500.0  # Limite máximo de força de arrasto
+@export_group("Air")
+@export var air_density = 1.225 # Densidade do ar em kg/m³ ao nível do mar
+@export var friction_loss:float = 0.1
+@export var drag_coefficient:float = 0.35
+@export var rolling_resistance:float = 0.015
+@export var frontal_area: float = 1.5
 
 enum WingType {
 	HIGH_AERO_WING, # Maximizar o downforce. Circuitos que possuem muitas curvas de baixa e média velocidade.
@@ -59,6 +60,6 @@ func DownforceController(delta: float) -> void:
 func DragController(delta: float) -> void:
 	var current_speed_squared = VehicleBody.current_speed * VehicleBody.current_speed
 	drag_force = 0.5 * drag_coefficient * air_density * frontal_area * current_speed_squared
-	drag_force = clamp(drag_force, 0, max_drag_force)
+	drag_force = clamp(drag_force, 0, 500)
 #
 	VehicleBody.add_constant_force(Vector3(0, 0, drag_force))
