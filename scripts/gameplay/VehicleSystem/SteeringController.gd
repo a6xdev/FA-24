@@ -59,7 +59,7 @@ func ComputerController(delta):
 		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * current_steering_speed)
 		
 
-@export var smoothing_factor = 0.2  # Taxa de suavização do filtro
+@export var smoothing_factor = 0.2
 var previous_steering_angle: float = 0.0
 var deadzone:float = 0.1
 var filtered_accel_value = 0.1

@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float):
 	update_engine_sound(BodyNode.current_rpm,delta)
-	update_eletric_engine(BodyNode.current_rpm, delta)
+	#update_eletric_engine(BodyNode.current_rpm, delta)
 
 func update_engine_sound(current_rpm: float, delta):
 	var target_pitch: float
@@ -88,7 +88,7 @@ func update_engine_sound(current_rpm: float, delta):
 	if current_rpm < mid_rpm_limit and high_is_playing:
 		sound_high_rpm.volume_db = lerp(sound_high_rpm.volume_db, 0.0, transition_speed * delta)
 
-	target_pitch = lerp(min_pitch, max_pitch, current_rpm / high_rpm_limit)
+	target_pitch = lerp(min_pitch, max_pitch, current_rpm / 13000)
 	sound_low_rpm.pitch_scale = target_pitch
 	sound_mid_rpm.pitch_scale = target_pitch
 	sound_high_rpm.pitch_scale = target_pitch

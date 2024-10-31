@@ -54,6 +54,7 @@ var speed_kmh:float = 0.0
 var engine_force:float
 var speed_limit_current = 0.0
 
+var is_accelerating:bool = false
 var is_reversing: bool = false
 var in_neutral: bool = false
 var is_braking:bool = false
@@ -86,8 +87,10 @@ func handle_inputs(delta:float):
 	else:
 		if Input.is_action_pressed("car_force"):
 			throttle_input = clamp(throttle_input + delta * Config.throttle_force, 0.0, 1.0)
+			is_accelerating = true
 		else:
 			throttle_input = clamp(throttle_input - delta * Config.throttle_force, 0.0, 1.0)
+			is_accelerating = false
 
 		if Input.is_action_pressed("car_brake"):
 			brake_input = clamp(brake_input + delta * Config.brake_force, 0.0, 1.0)
@@ -149,10 +152,12 @@ func handle_inputs(delta:float):
 		if gear <= 2 and gear > 0 and BodyControllerNode.current_speed <= 100:
 			if BodyControllerNode.steering >= 0.4:
 				if Input.is_action_pressed("car_force"):
-					BackTireRight.engine_force *= 350
+					BackTireLeft.engine_force *= 350
+					BackTireRight.engine_force -= 700
 			elif BodyControllerNode.steering <= -0.4:
 				if Input.is_action_pressed("car_force"):
-					BackTireLeft.engine_force *= 350
+					BackTireRight.engine_force *= 350
+					BackTireLeft.engine_force -= 700
 
 func EngineForceDynamic(delta: float) -> void:
 	var threshold = speed_limit_current * 0.20
