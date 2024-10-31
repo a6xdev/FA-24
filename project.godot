@@ -18,7 +18,8 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/mode=4
+window/stretch/mode="viewport"
+window/stretch/aspect="keep_height"
 window/handheld/orientation=4
 
 [importer_defaults]
