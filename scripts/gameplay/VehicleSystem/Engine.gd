@@ -97,34 +97,7 @@ func handle_inputs(delta:float):
 		else:
 			brake_input = clamp(brake_input - delta * Config.brake_force, 0.0, 1.0)
 		
-	if Config.automatic_gear:
-		if Input.is_action_pressed("car_force"):
-			if ignition and rpm > 0 and not in_neutral and not is_reversing:
-				BackTireLeft.engine_force = engine_force
-				BackTireRight.engine_force = engine_force
-			elif is_reversing and gear == -1:
-				BackTireLeft.brake = brake_force
-				BackTireRight.brake = brake_force
-				
-		elif Input.is_action_pressed("car_brake"):
-			if is_reversing:
-				BackTireLeft.engine_force = -engine_force / 5
-				BackTireRight.engine_force = -engine_force / 5
-			else:
-				BackTireLeft.brake = brake_force
-				BackTireRight.brake = brake_force
-				FrontTireLeft.brake = brake_force
-				FrontTireRight.brake = brake_force
-				is_braking = true
-		else:
-			BackTireLeft.engine_force = 0.0
-			BackTireRight.engine_force = 0.0
-			BackTireLeft.brake = 0.0
-			BackTireRight.brake = 0.0
-			FrontTireLeft.brake = 0.0
-			FrontTireRight.brake = 0.0
-			is_braking = false
-	else:
+		
 		if Input.is_action_pressed("car_brake"):
 			BackTireLeft.brake = brake_force
 			BackTireRight.brake = brake_force
@@ -143,21 +116,11 @@ func handle_inputs(delta:float):
 				BackTireLeft.engine_force = engine_force
 				BackTireRight.engine_force = engine_force
 			elif ignition and is_reversing and rpm > 0:
-				BackTireLeft.engine_force = -engine_force / 5
-				BackTireRight.engine_force = -engine_force / 5
+				BackTireLeft.engine_force = -engine_force / 3
+				BackTireRight.engine_force = -engine_force / 3
 		else:
 			BackTireLeft.engine_force = 0.0
 			BackTireRight.engine_force = 0.0
-		
-		if gear <= 2 and gear > 0 and BodyControllerNode.current_speed <= 100:
-			if BodyControllerNode.steering >= 0.4:
-				if Input.is_action_pressed("car_force"):
-					BackTireLeft.engine_force *= 350
-					BackTireRight.engine_force -= 700
-			elif BodyControllerNode.steering <= -0.4:
-				if Input.is_action_pressed("car_force"):
-					BackTireRight.engine_force *= 350
-					BackTireLeft.engine_force -= 700
 
 func EngineForceDynamic(delta: float) -> void:
 	var threshold = speed_limit_current * 0.20
@@ -171,6 +134,16 @@ func EngineForceDynamic(delta: float) -> void:
 		engine_force *= (1 - (distance_to_limit / threshold))
 	else:
 		engine_force = engine_force
+		
+	if gear <= 2 and gear > 0 and BodyControllerNode.current_speed <= 100:
+		if BodyControllerNode.steering >= 0.4:
+			if Input.is_action_pressed("car_force"):
+				BackTireLeft.engine_force *= 350
+				BackTireRight.engine_force -= 700
+		elif BodyControllerNode.steering <= -0.4:
+			if Input.is_action_pressed("car_force"):
+				BackTireRight.engine_force *= 350
+				BackTireLeft.engine_force -= 700
 
 func UpdateRPM(delta:float) -> void:
 	if not ignition:
@@ -215,12 +188,20 @@ func TransmissionController(delta:float) -> void:
 	speed_limit_current = 0.0
 	if gear == 0:
 		engine_force = 0
+		is_reversing = false
+		in_neutral = true
 	elif gear == -1:
 		speed_limit_current = speed_limit[0]
+		is_reversing = true
+		in_neutral = false
 	elif gear == 7:
 		speed_limit_current = speed_limit[8]
+		is_reversing = false
+		in_neutral = false
 	else:
 		speed_limit_current = speed_limit[gear + 1]
+		is_reversing = false
+		in_neutral = false
 
 func UpdateTorque() -> void:
 	var power: float = HP * 1000
