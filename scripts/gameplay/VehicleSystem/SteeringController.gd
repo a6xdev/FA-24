@@ -7,10 +7,12 @@ class_name SteeringController
 
 @export_group("Direction Settings")
 @export_range(0, 350) var speed_threshold:int = 120
+
 @export_subgroup("Steering Angle")
 @export var max_steering_angle:float = 300
 @export var max_tire_angle:float = 0.6
 @export var min_tire_angle:float = 0.05
+
 @export_subgroup("Steering Speed")
 @export var max_steering_speed:float = 2
 @export var min_steering_speed:float = 1
@@ -18,21 +20,24 @@ class_name SteeringController
 var current_steering_speed
 
 @export_group("Set Tires")
-@export var FrontLeftTire:VehicleWheel3D
-@export var FrontRightTire:VehicleWheel3D
-@export var BackLeftTire:VehicleWheel3D
-@export var BackRightTire:VehicleWheel3D
+@export var FrontLeftTyre:VehicleWheel3D
+@export var FrontRightTyre:VehicleWheel3D
+@export var BackLeftTyre:VehicleWheel3D
+@export var BackRightTyre:VehicleWheel3D
 
 var steering_input
 var current_steering:float
 var current_tire_angle:float
 
-# accelerometer
 var max_rotation: float = 1.0
+var smoothing_factor = 0.2
+var previous_steering_angle: float = 0.0
+var deadzone:float = 0.1
+var filtered_accel_value = 0.1
+
+var ackermann_factor: float = 0.7
 
 func _physics_process(delta: float) -> void:
-	
-	# Tire controller
 	var interpolation_factor = min(1.0, VehicleBody.current_speed / (speed_threshold * 1.0))
 	var tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
 	current_tire_angle = lerp(max_tire_angle, min_tire_angle, interpolation_factor)
@@ -57,12 +62,6 @@ func ComputerController(delta):
 		VehicleBody.steering = move_toward(VehicleBody.steering, 0 * current_tire_angle, delta * current_steering_speed)
 	else:
 		VehicleBody.steering = move_toward(VehicleBody.steering, input * current_tire_angle, delta * current_steering_speed)
-		
-
-@export var smoothing_factor = 0.2
-var previous_steering_angle: float = 0.0
-var deadzone:float = 0.1
-var filtered_accel_value = 0.1
 
 func MobileController(delta):
 	max_steering_speed = 1
