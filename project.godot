@@ -14,7 +14,7 @@ config/name="Formula Gamma"
 run/main_scene="res://scenes/tracks/track_001_untitled.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/low_processor_mode=true
-config/icon="res://icon.svg"
+config/icon="res://FG_24_LOGO_001.svg"
 
 [display]
 
