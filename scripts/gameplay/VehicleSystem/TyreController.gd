@@ -73,8 +73,6 @@ func _physics_process(delta: float) -> void:
 	TyreUI.psi = tire_pressure
 	TyreUI.temperature = temperature
 	TyreUI.wear = wear
-	$"../PlayerInterface/FPS2".text = "GRIP: " + str(current_grip)
-	print(self.name, ": ", self.steering)
 
 func GripUpdate() -> void:
 	#var pressure_factor: float = 1.0
