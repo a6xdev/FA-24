@@ -65,13 +65,14 @@ var brake_input:float = 0.0
 var gear:int = 0
 
 func _physics_process(delta: float) -> void:
-	CORE()
-	EngineForceDynamic(delta)
-	handle_inputs(delta)
-	
-	UpdateRPM(delta)
-	TransmissionController(delta)
-	UpdateTorque()
+	if not BodyControllerNode.debug:
+		CORE()
+		EngineForceDynamic(delta)
+		handle_inputs(delta)
+		
+		UpdateRPM(delta)
+		TransmissionController(delta)
+		UpdateTorque()
 
 func CORE():
 	if BodyControllerNode:
