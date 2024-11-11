@@ -14,10 +14,11 @@ config/name="Formula Gamma"
 run/main_scene="res://scenes/tracks/track_001_untitled.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 run/low_processor_mode=true
-config/icon="res://FG_24_LOGO_001.svg"
+config/icon="res://icon.svg"
 
 [display]
 
+window/size/mode=3
 window/stretch/mode="viewport"
 window/stretch/aspect="keep_height"
 window/handheld/orientation=4
@@ -97,7 +98,7 @@ SwitchCamera={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-anti_aliasing/quality/msaa_2d=1
 anti_aliasing/quality/msaa_3d=3
+anti_aliasing/quality/screen_space_aa=1
 anti_aliasing/quality/use_debanding=true
 occlusion_culling/use_occlusion_culling=true
