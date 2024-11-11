@@ -1,11 +1,9 @@
-[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://c1ya7gp5m3xvq"]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c1ya7gp5m3xvq"]
 
-[ext_resource type="Texture2D" uid="uid://dedkcik21iosn" path="res://assets/models/environments/tracks/untitled/Asphalt024A_2K-JPG_NormalGL.jpg" id="1_k5sns"]
-[ext_resource type="Texture2D" uid="uid://dayov38lquowh" path="res://assets/models/environments/tracks/untitled/Asphalt024A_2K-JPG_Roughness.jpg" id="2_17uu7"]
+[ext_resource type="Texture2D" uid="uid://c6yf4k3p1k3ut" path="res://assets/textures/Environments/Asphalt/Asphalt024A_2K-JPG_NormalDX.jpg" id="1_ygb77"]
 
 [resource]
 albedo_color = Color(0, 0, 0, 1)
-roughness_texture = ExtResource("2_17uu7")
 normal_enabled = true
-normal_texture = ExtResource("1_k5sns")
+normal_texture = ExtResource("1_ygb77")
 uv1_triplanar = true
