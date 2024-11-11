@@ -3,6 +3,7 @@ class_name EngineController
 
 @export var BodyControllerNode:BodyController
 @export var Config:PlayerConfig
+@export var SoundManager:SoundsController
 
 @export_group("Engine Settings")
 @export var ignition:bool = true
@@ -63,6 +64,8 @@ var is_braking:bool = false
 var throttle_input:float = 0.0
 var brake_input:float = 0.0
 var gear:int = 0
+
+signal gear_shifted(new_rpm: float)
 
 func _physics_process(delta: float) -> void:
 	if not BodyControllerNode.debug:
@@ -182,9 +185,11 @@ func TransmissionController(delta:float) -> void:
 	if Input.is_action_just_pressed("upshift") and gear < max_gear:
 		gear = min(gear + 1, max_gear)
 		rpm *= 0.66
+		emit_signal("gear_shifted", rpm)
 	elif Input.is_action_just_pressed("downshift") and gear < min_rpm:
 		gear = max(gear - 1, min_gear)
 		rpm *= 1.3
+		emit_signal("gear_shifted", rpm)
 		
 	speed_limit_current = 0.0
 	if gear == 0:

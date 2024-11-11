@@ -1,3 +1,6 @@
+# /// THIS SCRIPT IS SOO BAD. A TOTAL MESS
+# /// Making by aislan.
+
 extends Node
 class_name SoundsController
 
@@ -14,23 +17,27 @@ var mid_rpm_limit = 7000.0
 var high_rpm_limit = 11000.0
 
 var min_pitch = 0.6
-var max_pitch = 1.1
+var max_pitch = 1.3
 
 var target_volume_low: float = -15.0
 var target_volume_mid: float = -15.0
-var target_volume_high: float = -10.0
+var target_volume_high: float = -5.0
 var transition_speed: float = 1.0
 
 var target_volume_electric: float = -15.0
 var min_volume_electric: float = -30.0
 var electric_volume_transition_speed: float = 3.0
 
+var current_rpm: float = 0.0
+var target_rpm: float = 0.0
+var rpm_transition_speed: float = 10  # Velocidade da transição do RPM
 
 func _ready() -> void:
 	initialize_audio_volumes()
 
 func _physics_process(delta: float):
-	update_engine_sound(BodyNode.current_rpm,delta)
+	current_rpm = BodyNode.current_rpm
+	update_engine_sound(current_rpm, delta)
 	#update_eletric_engine(BodyNode.current_rpm, delta)
 
 func update_engine_sound(current_rpm: float, delta):
@@ -88,10 +95,14 @@ func update_engine_sound(current_rpm: float, delta):
 	if current_rpm < mid_rpm_limit and high_is_playing:
 		sound_high_rpm.volume_db = lerp(sound_high_rpm.volume_db, 0.0, transition_speed * delta)
 
-	target_pitch = lerp(min_pitch, max_pitch, current_rpm / 13000)
+	target_pitch = lerp(min_pitch, max_pitch, current_rpm / 12000)
 	sound_low_rpm.pitch_scale = target_pitch
 	sound_mid_rpm.pitch_scale = target_pitch
 	sound_high_rpm.pitch_scale = target_pitch
+
+	# Certifique-se de que o som está ativo
+	if not sound_high_rpm.playing:
+		sound_high_rpm.play()
 
 func update_eletric_engine(current_rpm:float, delta:float):
 	var electric_pitch = lerp(1.0, 3.0, current_rpm / high_rpm_limit)
@@ -110,3 +121,6 @@ func initialize_audio_volumes():
 	sound_mid_rpm.volume_db = -20.0
 	sound_high_rpm.volume_db = -20.0 
 	EletricEngine.volume_db = -20
+
+func _on_engine_controller_gear_shifted(new_rpm: float) -> void:
+	target_rpm = new_rpm
