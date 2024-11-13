@@ -76,6 +76,11 @@ func _physics_process(delta: float) -> void:
 		UpdateRPM(delta)
 		TransmissionController(delta)
 		UpdateTorque()
+	else:
+		BackTireLeft.brake = brake_force
+		BackTireRight.brake = brake_force
+		FrontTireLeft.brake = brake_force
+		FrontTireRight.brake = brake_force
 
 func CORE():
 	if BodyControllerNode:

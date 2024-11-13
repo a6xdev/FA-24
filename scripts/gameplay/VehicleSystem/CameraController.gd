@@ -7,7 +7,7 @@ extends Camera3D
 enum CameraMode {
 	COCKPIT,
 	ONBOARD,
-	TV_SIDE_POD
+	TV_POD_OFFSET
 }
 
 @export var current_camera_mode = CameraMode.ONBOARD
@@ -114,8 +114,8 @@ func _process(delta: float) -> void:
 				animation_player.play("COCKPIT")
 			CameraMode.ONBOARD:
 				animation_player.play("ONBOARD")
-			CameraMode.TV_SIDE_POD:
-				animation_player.play("TV_SIDE_POD")
+			CameraMode.TV_POD_OFFSET:
+				animation_player.play("TV_POD_OFFSET")
 		is_looking_back = false
 
 func SwitchCamera():
@@ -124,9 +124,9 @@ func SwitchCamera():
 			animation_player.play("ONBOARD")
 			current_camera_mode = CameraMode.ONBOARD
 		CameraMode.ONBOARD:
-			animation_player.play("TV_SIDE_POD")
-			current_camera_mode = CameraMode.TV_SIDE_POD
-		CameraMode.TV_SIDE_POD:
+			animation_player.play("TV_POD_OFFSET")
+			current_camera_mode = CameraMode.TV_POD_OFFSET
+		CameraMode.TV_POD_OFFSET:
 			animation_player.play("COCKPIT")
 			current_camera_mode = CameraMode.COCKPIT
 
@@ -183,5 +183,5 @@ func _restore_camera_animation():
 			animation_player.play("COCKPIT")
 		CameraMode.ONBOARD:
 			animation_player.play("ONBOARD")
-		CameraMode.TV_SIDE_POD:
-			animation_player.play("TV_SIDE_POD")
+		CameraMode.TV_POD_OFFSET:
+			animation_player.play("TV_POD_OFFSET")
