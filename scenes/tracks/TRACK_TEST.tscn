@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3 uid="uid://fu1cw2mj3362"]
+
+[ext_resource type="PackedScene" uid="uid://uuwnvruoeg54" path="res://assets/prefabs/Actors/Player.tscn" id="1_o2gww"]
+[ext_resource type="Material" uid="uid://def8jowmay367" path="res://assets/materials/environments/Grass/GRASS_01.tres" id="2_cg8rv"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ovtmt"]
+material = ExtResource("2_cg8rv")
+size = Vector2(20000, 20000)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_abvr0"]
+data = PackedVector3Array(10000, 0, 10000, -10000, 0, 10000, 10000, 0, -10000, -10000, 0, 10000, -10000, 0, -10000, 10000, 0, -10000)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bxotl"]
+
+[sub_resource type="Sky" id="Sky_o1jf8"]
+sky_material = SubResource("ProceduralSkyMaterial_bxotl")
+
+[sub_resource type="Environment" id="Environment_482ma"]
+background_mode = 2
+sky = SubResource("Sky_o1jf8")
+
+[node name="TrackTest" type="Node3D"]
+
+[node name="actors" type="Node" parent="."]
+
+[node name="Player" parent="actors" instance=ExtResource("1_o2gww")]
+
+[node name="maps" type="Node" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="maps"]
+mesh = SubResource("PlaneMesh_ovtmt")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="maps/Ground"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="maps/Ground/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_abvr0")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_482ma")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.782608, 0.622515, 0, -0.622515, 0.782608, 0, 6.44475, 0)
+light_bake_mode = 1
+directional_shadow_mode = 0
