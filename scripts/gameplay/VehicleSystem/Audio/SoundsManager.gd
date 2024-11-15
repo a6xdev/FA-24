@@ -10,7 +10,7 @@ class_name SoundsController
 @export var sound_low_rpm: AudioStreamPlayer
 @export var sound_mid_rpm: AudioStreamPlayer
 @export var sound_high_rpm: AudioStreamPlayer
-@export var EletricEngine: AudioStreamPlayer
+@export var Turbo: AudioStreamPlayer
 
 var low_rpm_limit = 2000.0
 var mid_rpm_limit = 7000.0
@@ -24,9 +24,9 @@ var target_volume_mid: float = -15.0
 var target_volume_high: float = -5.0
 var transition_speed: float = 1.0
 
-var target_volume_electric: float = -15.0
-var min_volume_electric: float = -30.0
-var electric_volume_transition_speed: float = 3.0
+var target_volume_turbo: float = -10.0
+var min_volume_turbo: float = -30.0
+var turbo_volume_transition_speed: float = 3.0
 
 var current_rpm: float = 0.0
 var target_rpm: float = 0.0
@@ -38,7 +38,7 @@ func _ready() -> void:
 func _physics_process(delta: float):
 	current_rpm = BodyNode.current_rpm
 	update_engine_sound(current_rpm, delta)
-	#update_eletric_engine(BodyNode.current_rpm, delta)
+	update_turbo(BodyNode.current_rpm, delta)
 
 func update_engine_sound(current_rpm: float, delta):
 	var target_pitch: float
@@ -104,23 +104,23 @@ func update_engine_sound(current_rpm: float, delta):
 	if not sound_high_rpm.playing:
 		sound_high_rpm.play()
 
-func update_eletric_engine(current_rpm:float, delta:float):
-	var electric_pitch = lerp(1.0, 3.0, current_rpm / high_rpm_limit)
-	var target_electric_volume = target_volume_electric
-	EletricEngine.pitch_scale = electric_pitch
+func update_turbo(current_rpm:float, delta:float):
+	var turbo_pitch = lerp(0.8, 1.5, current_rpm / high_rpm_limit)
+	var target_turbo_volume = target_volume_turbo
+	Turbo.pitch_scale = turbo_pitch
 	
 	if current_rpm < low_rpm_limit:
-		target_electric_volume = min_volume_electric
+		target_turbo_volume = min_volume_turbo
 		
-	EletricEngine.volume_db = lerp(EletricEngine.volume_db, target_electric_volume, electric_volume_transition_speed * delta)
-	if not EletricEngine.playing:
-		EletricEngine.play()
+	Turbo.volume_db = lerp(Turbo.volume_db, target_turbo_volume, turbo_volume_transition_speed * delta)
+	if not Turbo.playing:
+		Turbo.play()
 
 func initialize_audio_volumes():
 	sound_low_rpm.volume_db = target_volume_low
 	sound_mid_rpm.volume_db = -20.0
 	sound_high_rpm.volume_db = -20.0 
-	EletricEngine.volume_db = -20
+	Turbo.volume_db = -20
 
 func _on_engine_controller_gear_shifted(new_rpm: float) -> void:
 	target_rpm = new_rpm
