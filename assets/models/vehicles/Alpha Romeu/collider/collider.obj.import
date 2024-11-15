@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dtftc5yen50w4"
+path="res://.godot/imported/collider.obj-87b2530290209fdb2d05f4b257d16878.mesh"
+
+[deps]
+
+files=["res://.godot/imported/collider.obj-87b2530290209fdb2d05f4b257d16878.mesh"]
+
+source_file="res://assets/models/vehicles/Alpha Romeu/collider/collider.obj"
+dest_files=["res://.godot/imported/collider.obj-87b2530290209fdb2d05f4b257d16878.mesh", "res://.godot/imported/collider.obj-87b2530290209fdb2d05f4b257d16878.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
